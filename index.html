@@ -1,337 +1,512 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ne">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nirmi — Vendor Research</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://unpkg.com/survey-core@1.12.23/defaultV2.min.css" type="text/css" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <title>Nirmi — Vendor Survey</title>
+  <link rel="stylesheet" href="https://unpkg.com/survey-core@1.12.23/defaultV2.min.css">
+  <script src="https://unpkg.com/survey-core@1.12.23/survey.core.min.js"></script>
+  <script src="https://unpkg.com/survey-js-ui@1.12.23/survey-js-ui.min.js"></script>
   <style>
     :root {
-      --ink: #2c3e50;
-      --muted: #6b7a7a;
-      --line: #ede3de;
-      --bg: #fff9f0;
-      --card: #ffffff;
       --brand: #ff8369;
-      --brand-dark: #e06a52;
+      --brand-dark: #e0674f;
       --accent: #ffcc00;
-      --warn: #b45309;
-      --good: #166534;
+      --bg: #faf7f5;
+      --card: #ffffff;
+      --text: #2d2d2d;
+      --muted: #888;
       --radius: 16px;
-      --shadow: 0 12px 30px rgba(44, 62, 80, 0.07);
+      --shadow: 0 4px 20px rgba(0,0,0,0.08);
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: "Nunito", sans-serif;
-      color: var(--ink);
-      background: radial-gradient(circle at 15% 0%, #fff0e8 0, var(--bg) 35%);
-      min-height: 100vh;
-    }
-    .wrap { max-width: 720px; margin: 0 auto; padding: 12px 14px 26px; }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 16px;
-      transition: box-shadow 0.3s ease;
-    }
-    .card:hover { box-shadow: 0 16px 40px rgba(44, 62, 80, 0.1); }
-
-    /* ── Language bar ── */
-    .lang-bar {
-      display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-bottom: 8px;
-    }
-    .lang-bar label { font-size: 0.82rem; color: var(--muted); font-weight: 600; }
-    .lang-bar select {
-      font-family: inherit; font-size: 0.84rem; font-weight: 600;
-      padding: 5px 10px; border: 1px solid var(--line); border-radius: 8px;
-      background: var(--card); color: var(--ink); cursor: pointer;
-    }
-
-    /* ── Brand header ── */
-    .brand {
-      display: grid; gap: 10px; align-items: center;
-      justify-items: center; text-align: center; margin-bottom: 12px;
-    }
-    .brand-logo {
-      width: 80px; height: 80px; border-radius: 20px;
-      background: var(--bg); border: 1px solid var(--line); padding: 10px;
-    }
-    .brand h1 {
-      margin: 0; font-size: clamp(1.15rem, 4vw, 1.55rem);
-      font-weight: 800; letter-spacing: -0.01em; color: var(--ink);
-    }
-    .brand p { margin: 0; color: var(--muted); font-size: 0.94rem; line-height: 1.45; }
-    .intro-badge {
-      font-size: 0.86rem; line-height: 1.5; color: var(--brand-dark);
-      background: #fff0e8; border: 1px solid #ffd4c0; border-radius: 10px;
-      padding: 10px 12px; text-align: left;
-    }
-    .meta-row {
-      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px; width: 100%;
-    }
-    .meta-item {
-      border: 1px solid var(--line); border-radius: 10px;
-      background: #fffbf7; padding: 8px; text-align: left;
-    }
-    .meta-item .k { font-size: 0.73rem; color: var(--muted); margin-bottom: 2px; }
-    .meta-item .v { font-size: 0.88rem; font-weight: 700; word-break: break-word; }
-
-    /* ── Survey card ── */
-    #surveyCard { margin-top: 12px; overflow: hidden; }
-    #surveyContainer { min-height: 340px; }
-
-    /* ── Result card ── */
-    .result { margin-top: 12px; display: none; gap: 10px; }
-    .result.show { display: grid; animation: popIn 0.4s ease-out; }
-    .code-pill {
-      display: inline-flex; align-items: center; padding: 6px 10px;
-      border-radius: 999px; background: #fff5ee; color: var(--brand-dark);
-      font-weight: 700; font-size: 0.82rem; width: fit-content;
-    }
-    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
-    .btn {
-      border: 1px solid var(--line); border-radius: 10px; padding: 9px 12px;
-      background: #fff; color: var(--ink); font-weight: 700; font-family: inherit;
-      cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-    .btn:active { transform: scale(0.97); }
-    .btn.primary {
-      background: var(--brand); border-color: transparent; color: #fff;
-    }
-    .btn.primary:hover { box-shadow: 0 4px 14px rgba(255, 131, 105, 0.35); }
-    .mini { font-size: 0.84rem; color: var(--muted); margin: 0; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; padding: 0 0 40px; }
     .hidden { display: none !important; }
 
-    /* ── Progress ring ── */
-    .progress-strip {
-      display: flex; align-items: center; gap: 10px; margin-top: 12px;
-      padding: 10px 14px; border-radius: 12px;
-      background: linear-gradient(135deg, #fff0e8 0%, #fffbf0 100%);
-      border: 1px solid var(--line); width: 100%;
-    }
-    .progress-ring { position: relative; width: 42px; height: 42px; flex-shrink: 0; }
-    .progress-ring svg { transform: rotate(-90deg); width: 42px; height: 42px; }
-    .progress-ring .track { fill: none; stroke: var(--line); stroke-width: 4; }
-    .progress-ring .fill {
-      fill: none; stroke: var(--brand); stroke-width: 4; stroke-linecap: round;
-      stroke-dasharray: 113; stroke-dashoffset: 113;
-      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .progress-pct {
-      position: absolute; inset: 0; display: flex; align-items: center;
-      justify-content: center; font-size: 0.68rem; font-weight: 800; color: var(--brand);
-    }
-    .progress-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-    .progress-text .countdown { font-size: 0.88rem; font-weight: 700; color: var(--ink); }
-    .progress-text .encourage {
-      font-size: 0.82rem; color: var(--brand); font-weight: 600;
-      animation: fadeSlideIn 0.4s ease-out;
-    }
+    /* ── Brand header ── */
+    .brand { text-align: center; padding: 28px 16px 12px; }
+    .brand-logo { width: 56px; height: 56px; border-radius: 14px; }
+    .brand h1 { font-size: 1.35rem; margin: 8px 0 2px; color: var(--brand); }
+    .brand .subtitle { font-size: 0.85rem; color: var(--muted); }
+    .brand .intro { font-size: 0.92rem; margin: 10px auto 0; max-width: 340px; line-height: 1.5; }
+    .meta-row { display: flex; justify-content: center; gap: 16px; margin-top: 10px; font-size: 0.72rem; color: var(--muted); flex-wrap: wrap; }
+    .meta-row span { white-space: nowrap; }
 
-    /* ── Submitting pulse ── */
+    /* ── Language bar ── */
+    .lang-bar { display: flex; justify-content: flex-end; align-items: center; padding: 10px 16px 0; gap: 6px; }
+    .lang-bar label { font-size: 0.78rem; color: var(--muted); }
+    .lang-bar select { font-size: 0.82rem; padding: 3px 6px; border-radius: 6px; border: 1px solid #ddd; background: var(--card); }
+
+    /* ── Progress ── */
+    .progress-strip { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 8px 16px; }
+    .progress-ring { width: 44px; height: 44px; }
+    .progress-ring__bg { fill: none; stroke: #eee; stroke-width: 4; }
+    .progress-ring__fill { fill: none; stroke: var(--brand); stroke-width: 4; stroke-linecap: round; transition: stroke-dashoffset 0.4s ease; transform: rotate(-90deg); transform-origin: center; }
+    .progress-info { text-align: left; }
+    .progress-info .pct { font-weight: 700; font-size: 0.95rem; }
+    .progress-info .countdown { font-size: 0.78rem; color: var(--muted); }
+    .progress-info .encourage { font-size: 0.78rem; color: var(--brand); animation: fadeSlideIn 0.4s ease; }
+
+    /* ── Survey card ── */
+    .survey-card { max-width: 520px; margin: 0 auto; padding: 0 12px; }
+
+    /* ── Result card ── */
+    .result-card { display: none; max-width: 400px; margin: 24px auto; padding: 28px 20px; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); text-align: center; }
+    .result-card.show { display: block; animation: popIn 0.35s ease; }
+    .result-card h2 { font-size: 1.2rem; margin-bottom: 8px; }
+    .result-card .code { font-family: monospace; font-size: 0.85rem; color: var(--brand); margin: 6px 0 12px; }
+    .result-card button { display: inline-block; margin: 4px; padding: 10px 18px; border: none; border-radius: 10px; font-size: 0.88rem; cursor: pointer; background: var(--brand); color: #fff; }
+    .result-card button:active { transform: scale(0.97); }
+    .result-card button.secondary { background: #eee; color: var(--text); }
     .submitting-pulse { animation: pulse 1.2s ease-in-out infinite; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
-    @keyframes fadeSlideIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* ── Help bottom sheet ── */
+    .help-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 999; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+    .help-overlay.open { opacity: 1; pointer-events: auto; }
+    .help-sheet { position: fixed; bottom: 0; left: 0; right: 0; background: var(--card); border-radius: 20px 20px 0 0; padding: 20px 20px 32px; max-height: 65vh; overflow-y: auto; z-index: 1000; transform: translateY(100%); transition: transform 0.3s ease; box-shadow: 0 -4px 24px rgba(0,0,0,0.12); }
+    .help-sheet.open { transform: translateY(0); }
+    .help-sheet .help-handle { width: 40px; height: 4px; border-radius: 2px; background: #ddd; margin: 0 auto 14px; }
+    .help-sheet h3 { font-size: 1rem; margin-bottom: 8px; color: var(--brand); }
+    .help-sheet p { font-size: 0.88rem; line-height: 1.55; margin-bottom: 6px; }
+    .help-sheet ul { font-size: 0.85rem; line-height: 1.55; padding-left: 18px; }
+    .help-sheet li { margin-bottom: 4px; }
+    .help-btn { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--brand); color: var(--brand); font-size: 0.72rem; font-weight: 700; cursor: pointer; background: transparent; margin-left: 6px; vertical-align: middle; line-height: 1; flex-shrink: 0; }
+    .help-btn:active { background: var(--brand); color: #fff; }
+
+    /* ── Celebration ── */
+    .confetti-container { position: fixed; inset: 0; pointer-events: none; z-index: 9998; overflow: hidden; }
+    .confetti-piece { position: absolute; top: -30px; font-size: 1.5rem; animation: confettiFall 3s ease-out forwards; }
+    @keyframes confettiFall {
+      0% { transform: translateY(0) rotate(0deg) scale(1); opacity: 1; }
+      80% { opacity: 1; }
+      100% { transform: translateY(105vh) rotate(720deg) scale(0.5); opacity: 0; }
     }
-    @keyframes popIn {
-      0% { transform: scale(0.85); opacity: 0; }
-      60% { transform: scale(1.04); }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    @media (max-width: 620px) {
-      .meta-row { grid-template-columns: 1fr; }
-      .card { padding: 14px; }
-    }
+    .success-toast { position: fixed; top: 18%; left: 50%; transform: translateX(-50%); background: var(--card); border-radius: 20px; padding: 28px 32px; box-shadow: 0 8px 40px rgba(0,0,0,0.18); z-index: 10000; text-align: center; animation: toastIn 0.4s ease; min-width: 240px; }
+    .success-toast .toast-close { position: absolute; top: 10px; right: 14px; background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--muted); }
+    .success-toast .toast-emoji { font-size: 2.5rem; margin-bottom: 8px; }
+    .success-toast .toast-text { font-size: 1rem; font-weight: 600; }
+    .toast-fade { opacity: 0; transition: opacity 0.4s; }
+    @keyframes toastIn { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+    /* ── Char counter ── */
+    .char-counter { font-size: 0.72rem; color: var(--muted); text-align: right; margin-top: 2px; }
+    .char-counter.near-limit { color: var(--brand); font-weight: 600; }
+
+    /* ── Animations ── */
+    @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
   </style>
 </head>
 <body>
-  <main class="wrap">
-    <div class="lang-bar">
-      <label for="langSelect" id="langLabel">Language</label>
-      <select id="langSelect">
-        <option value="ne">नेपाली</option>
-        <option value="hi">हिन्दी</option>
-        <option value="en">English</option>
-      </select>
+  <!-- Language bar -->
+  <div class="lang-bar">
+    <label id="langLabel">भाषा:</label>
+    <select id="langSelect">
+      <option value="ne">नेपाली</option>
+      <option value="hi">हिन्दी</option>
+      <option value="en">English</option>
+    </select>
+  </div>
+
+  <!-- Brand header -->
+  <div class="brand">
+    <img class="brand-logo" src="assets/nirmi-logo.png" alt="Nirmi"
+         onerror="this.style.display='none'">
+    <h1 id="pageTitle">निर्मी — विक्रेता सर्वेक्षण</h1>
+    <p class="subtitle" id="pageSubtitle">तपाईँको व्यापार बुझ्न मद्दत गर्नुहोस्</p>
+    <p class="intro" id="introText">तपाईँको जवाफले हामीलाई तपाईँको लागि राम्रो app बनाउन मद्दत गर्छ।</p>
+    <div class="meta-row">
+      <span><span id="labelSession">Session:</span> <strong id="metaSession">—</strong></span>
+      <span><span id="labelArea">Area:</span> <strong id="metaArea">—</strong></span>
+      <span><span id="labelInterviewer">Interviewer:</span> <strong id="metaInterviewer">—</strong></span>
     </div>
+  </div>
 
-    <section class="card brand">
-      <img class="brand-logo" src="./assets/logo.svg" alt="Nirmi logo">
-      <h1 id="pageTitle">Nirmi — Vendor Research</h1>
-      <p id="pageSubtitle">Please answer this short form. It takes about 4–5 minutes.</p>
-      <p id="introText" class="intro-badge">This is market research for the Nirmi app. Your answers help us build the app around your real needs.</p>
-      <div class="meta-row">
-        <div class="meta-item">
-          <div class="k" id="labelSession">Session</div>
-          <div class="v" id="metaSession">-</div>
-        </div>
-        <div class="meta-item">
-          <div class="k" id="labelArea">Area</div>
-          <div class="v" id="metaArea">-</div>
-        </div>
-        <div class="meta-item">
-          <div class="k" id="labelInterviewer">Interviewer</div>
-          <div class="v" id="metaInterviewer">-</div>
-        </div>
-      </div>
-      <div id="progressStrip" class="progress-strip hidden">
-        <div class="progress-ring">
-          <svg viewBox="0 0 40 40"><circle class="track" cx="20" cy="20" r="18"/><circle id="progressFill" class="fill" cx="20" cy="20" r="18"/></svg>
-          <span class="progress-pct" id="progressPct">0%</span>
-        </div>
-        <div class="progress-text">
-          <span class="countdown" id="countdownText"></span>
-          <span class="encourage" id="encourageText"></span>
-        </div>
-      </div>
-    </section>
+  <!-- Progress strip -->
+  <div class="progress-strip hidden" id="progressStrip">
+    <svg class="progress-ring" viewBox="0 0 44 44">
+      <circle class="progress-ring__bg" cx="22" cy="22" r="18"/>
+      <circle class="progress-ring__fill" id="progressFill" cx="22" cy="22" r="18"
+              stroke-dasharray="113.1" stroke-dashoffset="113.1"/>
+    </svg>
+    <div class="progress-info">
+      <div class="pct" id="progressPct">0%</div>
+      <div class="countdown" id="countdownText"></div>
+      <div class="encourage" id="encourageText"></div>
+    </div>
+  </div>
 
-    <section id="surveyCard" class="card">
-      <div id="surveyContainer"></div>
-    </section>
+  <!-- Survey -->
+  <div class="survey-card" id="surveyCard">
+    <div id="surveyContainer"></div>
+  </div>
 
-    <section id="resultCard" class="card result" aria-live="polite">
-      <h2 id="resultTitle" style="margin: 0; font-size: 1.1rem;">Submitting…</h2>
-      <p id="resultMessage" class="mini"></p>
-      <span id="submissionCode" class="code-pill hidden"></span>
-      <div class="actions">
-        <button type="button" id="retryBtn" class="btn hidden">Retry</button>
-        <button type="button" id="copyPayloadBtn" class="btn hidden">Copy data</button>
-        <button type="button" id="startOverBtn" class="btn primary hidden">New response</button>
-      </div>
-    </section>
-  </main>
+  <!-- Result -->
+  <div class="result-card" id="resultCard">
+    <h2 id="resultTitle"></h2>
+    <p id="resultMessage"></p>
+    <p class="code hidden" id="submissionCode"></p>
+    <button class="hidden" id="retryBtn">Retry</button>
+    <button class="hidden secondary" id="copyPayloadBtn">Copy</button>
+    <button class="hidden secondary" id="startOverBtn">New</button>
+  </div>
 
-  <script src="https://unpkg.com/survey-core@1.12.23/survey.core.min.js"></script>
-  <script src="https://unpkg.com/survey-js-ui@1.12.23/survey-js-ui.min.js"></script>
+  <!-- Help bottom sheet -->
+  <div class="help-overlay" id="helpOverlay"></div>
+  <div class="help-sheet" id="helpSheet">
+    <div class="help-handle"></div>
+    <h3 id="helpTitle"></h3>
+    <div id="helpBody"></div>
+  </div>
+
   <script>
+    "use strict";
+
     /* ══════════════════════════════════════════════════════
        Config
        ══════════════════════════════════════════════════════ */
     const INTAKE_URL = "https://nirmi-intake.michael-zl-prime.workers.dev/intake";
-
+    const SURVEY_VERSION = "4.0";
     const BAND_MIDPOINTS = {
-      customers_band: { "1-10": 5, "11-20": 15, "21-40": 30, "41-70": 55, "71-100": 85, "100+": 120 },
-      revenue_band: { "Below 1000": 700, "1000-2000": 1500, "2000-4000": 3000, "4000-7000": 5500, "7000-12000": 9500, "12000+": 15000 }
+      customers_band: { cb_1_10:5, cb_11_20:15, cb_21_40:30, cb_41_70:55, cb_71_100:85, cb_over100:130 },
+      revenue_band: { rb_under1k:700, rb_1k_2k:1500, rb_2k_4k:3000, rb_4k_7k:5500, rb_7k_12k:9500, rb_over12k:15000 }
     };
 
     /* ══════════════════════════════════════════════════════
-       SURVEY — 6 pages, conditional logic, multi-select
+       Survey JSON — v4.0
+       All choice values are stable IDs.
        ══════════════════════════════════════════════════════ */
     const SURVEY_JSON = {
-      showProgressBar: "top",
-      progressBarType: "pages",
+      showQuestionNumbers: "on",
+      questionStartIndex: "1",
       clearInvisibleValues: "onHidden",
-      checkErrorsMode: "onValueChanged",
-      completeText: "Submit",
+      focusOnFirstError: true,
+      focusFirstQuestionAutomatic: false,
       pages: [
+        /* ── Page 1: Business ── */
         {
-          name: "business", title: "Your business",
+          name: "business",
+          title: "Your Business",
           elements: [
+            { type: "text", name: "vendor_name", title: "Your name (optional)", isRequired: false, maxLength: 80 },
             { type: "checkbox", name: "vendor_type", title: "What do you sell?", isRequired: true,
-              choices: ["Vegetables", "Fruits", "Snacks", "Dairy", "Mixed groceries", "Cooked food", "Other"] },
+              showNoneItem: true, noneText: "Prefer not to answer",
+              choices: [
+                { value: "vt_veg", text: "Vegetables" },
+                { value: "vt_fruit", text: "Fruits" },
+                { value: "vt_snack", text: "Snacks" },
+                { value: "vt_dairy", text: "Dairy (milk, curd, etc.)" },
+                { value: "vt_grocery", text: "Mixed groceries" },
+                { value: "vt_cooked", text: "Cooked food" },
+                { value: "vt_other", text: "Other" }
+              ]
+            },
             { type: "radiogroup", name: "selling_mode", title: "How do you sell?", isRequired: true,
-              choices: ["Mobile cart", "Stationary spot", "Permanent shop"] },
-            { type: "text", name: "travel_hours", title: "Hours per day traveling / selling on the move",
-              inputType: "number", visibleIf: "{selling_mode} = 'Mobile cart'", isRequired: true },
-            { type: "radiogroup", name: "travel_km", title: "Distance covered per day (approx)",
-              visibleIf: "{selling_mode} = 'Mobile cart'", isRequired: true,
-              choices: ["Less than 2 km", "2-5 km", "5-10 km", "More than 10 km"] },
-            { type: "radiogroup", name: "stops_per_day", title: "Selling stops per day",
-              visibleIf: "{selling_mode} = 'Mobile cart'", isRequired: true,
-              choices: ["1-3", "4-6", "7-10", "10+"] },
-            { type: "text", name: "spot_hours", title: "Hours per day at your selling spot",
-              inputType: "number", visibleIf: "{selling_mode} = 'Stationary spot'", isRequired: true },
-            { type: "radiogroup", name: "location_type", title: "Type of selling spot",
-              visibleIf: "{selling_mode} = 'Stationary spot'", isRequired: true,
-              choices: ["Sidewalk / footpath", "Market area", "Intersection / chowk", "Temple / shrine area", "Other"] },
-            { type: "radiogroup", name: "shop_type", title: "Type of shop",
-              visibleIf: "{selling_mode} = 'Permanent shop'", isRequired: true,
-              choices: ["Rented space", "Own building", "Market stall", "Other"] },
-            { type: "radiogroup", name: "shift_window", title: "Main selling time", isRequired: true,
-              choices: ["Morning", "Afternoon", "Evening", "All day"] }
+              choices: [
+                { value: "sm_mobile", text: "I go around selling (cart / vehicle)" },
+                { value: "sm_stationary", text: "I sit in one spot" },
+                { value: "sm_permanent", text: "I have a permanent shop" },
+                { value: "_skip", text: "Prefer not to answer" }
+              ]
+            },
+            /* Mobile-only */
+            { type: "radiogroup", name: "transport_mode", title: "How do you carry your goods?",
+              visibleIf: "{selling_mode} = 'sm_mobile'", isRequired: false,
+              choices: [
+                { value: "tm_cart", text: "Pushcart / hand cart" },
+                { value: "tm_moto", text: "Motorcycle" },
+                { value: "tm_bicycle", text: "Bicycle" },
+                { value: "tm_foot", text: "On foot / head-carry" },
+                { value: "tm_auto", text: "Auto-rickshaw / tempo" }
+              ]
+            },
+            { type: "radiogroup", name: "carry_weight_kg", title: "How many kg do you carry per trip?",
+              visibleIf: "{selling_mode} = 'sm_mobile'", isRequired: false,
+              choices: [
+                { value: "cw_under5", text: "Less than 5 kg" },
+                { value: "cw_5_10", text: "5–10 kg" },
+                { value: "cw_10_20", text: "10–20 kg" },
+                { value: "cw_20_30", text: "20–30 kg" },
+                { value: "cw_over30", text: "More than 30 kg" }
+              ]
+            },
+            { type: "text", name: "travel_hours", title: "How many hours do you travel per day?",
+              visibleIf: "{selling_mode} = 'sm_mobile'", inputType: "number", min: 0, max: 24, isRequired: false },
+            { type: "radiogroup", name: "travel_km", title: "How far do you travel in a day?",
+              visibleIf: "{selling_mode} = 'sm_mobile'", isRequired: false,
+              choices: [
+                { value: "tk_under2", text: "Less than 2 km" },
+                { value: "tk_2_5", text: "2–5 km" },
+                { value: "tk_5_10", text: "5–10 km" },
+                { value: "tk_over10", text: "More than 10 km" }
+              ]
+            },
+            { type: "radiogroup", name: "stops_per_day", title: "How many stops do you make per day?",
+              visibleIf: "{selling_mode} = 'sm_mobile'", isRequired: false,
+              choices: [
+                { value: "sd_1_3", text: "1–3" },
+                { value: "sd_4_6", text: "4–6" },
+                { value: "sd_7_10", text: "7–10" },
+                { value: "sd_over10", text: "10+" }
+              ]
+            },
+            /* Stationary-only */
+            { type: "text", name: "spot_hours", title: "How many hours do you sit per day?",
+              visibleIf: "{selling_mode} = 'sm_stationary'", inputType: "number", min: 0, max: 24, isRequired: false },
+            { type: "radiogroup", name: "location_type", title: "Where is your spot?",
+              visibleIf: "{selling_mode} = 'sm_stationary'", isRequired: false,
+              choices: [
+                { value: "lt_sidewalk", text: "Sidewalk / footpath" },
+                { value: "lt_market", text: "Market area" },
+                { value: "lt_intersection", text: "Intersection / chowk" },
+                { value: "lt_temple", text: "Temple / shrine area" },
+                { value: "lt_other", text: "Other" }
+              ]
+            },
+            /* Permanent-only */
+            { type: "radiogroup", name: "shop_type", title: "What kind of shop?",
+              visibleIf: "{selling_mode} = 'sm_permanent'", isRequired: false,
+              choices: [
+                { value: "st_rented", text: "Rented space" },
+                { value: "st_own", text: "Own building" },
+                { value: "st_stall", text: "Market stall" },
+                { value: "st_other", text: "Other" }
+              ]
+            },
+            /* All */
+            { type: "radiogroup", name: "shift_window", title: "When do you sell?", isRequired: true,
+              choices: [
+                { value: "sw_morning", text: "Morning" },
+                { value: "sw_afternoon", text: "Afternoon" },
+                { value: "sw_evening", text: "Evening" },
+                { value: "sw_allday", text: "All day" },
+                { value: "_skip", text: "Prefer not to answer" }
+              ]
+            }
           ]
         },
+        /* ── Page 2: Income ── */
         {
-          name: "income", title: "Income and profit",
+          name: "income",
+          title: "Income & Sales",
           elements: [
-            { type: "radiogroup", name: "customers_band", title: "Customers per shift (approx)", isRequired: true,
-              choices: ["1-10", "11-20", "21-40", "41-70", "71-100", "100+"] },
-            { type: "radiogroup", name: "revenue_band", title: "Total revenue per shift (NPR)", isRequired: true,
-              choices: ["Below 1000", "1000-2000", "2000-4000", "4000-7000", "7000-12000", "12000+"] },
-            { type: "radiogroup", name: "business_model", title: "Do you mostly resell or make your products?", isRequired: true,
-              choices: ["Resell as-is", "Make or prepare myself", "Both"] },
-            { type: "radiogroup", name: "profit_margin", title: "For every NPR 100 in sales, roughly how much is profit?", isRequired: true,
-              choices: ["Less than 10", "10-20", "20-35", "35-50", "More than 50"] },
-            { type: "text", name: "main_item_cost", title: "Cost to make/buy your main item (NPR)",
-              inputType: "number", visibleIf: "{business_model} = 'Make or prepare myself' or {business_model} = 'Both'" },
-            { type: "text", name: "main_item_price", title: "Selling price of your main item (NPR)",
-              inputType: "number", visibleIf: "{business_model} = 'Make or prepare myself' or {business_model} = 'Both'" }
+            { type: "radiogroup", name: "customers_band", title: "How many customers come per day?", isRequired: true,
+              choices: [
+                { value: "cb_1_10", text: "1–10" },
+                { value: "cb_11_20", text: "11–20" },
+                { value: "cb_21_40", text: "21–40" },
+                { value: "cb_41_70", text: "41–70" },
+                { value: "cb_71_100", text: "71–100" },
+                { value: "cb_over100", text: "100+" },
+                { value: "_skip", text: "Prefer not to answer" }
+              ]
+            },
+            { type: "radiogroup", name: "revenue_band", title: "How many rupees of goods sell in one day?", isRequired: true,
+              choices: [
+                { value: "rb_under1k", text: "Below NPR 1,000" },
+                { value: "rb_1k_2k", text: "NPR 1,000–2,000" },
+                { value: "rb_2k_4k", text: "NPR 2,000–4,000" },
+                { value: "rb_4k_7k", text: "NPR 4,000–7,000" },
+                { value: "rb_7k_12k", text: "NPR 7,000–12,000" },
+                { value: "rb_over12k", text: "NPR 12,000+" },
+                { value: "_skip", text: "Prefer not to answer" }
+              ]
+            },
+            { type: "radiogroup", name: "business_model", title: "Do you buy goods to sell, or make them yourself?", isRequired: true,
+              choices: [
+                { value: "bm_buy", text: "I buy and resell" },
+                { value: "bm_make", text: "I make / prepare myself" },
+                { value: "bm_both", text: "Both" },
+                { value: "_skip", text: "Prefer not to answer" }
+              ]
+            },
+            { type: "radiogroup", name: "profit_margin", title: "If you sell for 100 rupees, how much is your profit?", isRequired: true,
+              description: "Out of every 100 rupees you receive, how much is left after costs?",
+              choices: [
+                { value: "pm_under10", text: "Less than 10 rupees" },
+                { value: "pm_10_20", text: "10–20 rupees" },
+                { value: "pm_20_35", text: "20–35 rupees" },
+                { value: "pm_35_50", text: "35–50 rupees" },
+                { value: "pm_over50", text: "More than 50 rupees" },
+                { value: "_skip", text: "Prefer not to answer" }
+              ]
+            },
+            { type: "text", name: "main_item_cost", title: "Your main product — your buying price (NPR)",
+              visibleIf: "{business_model} = 'bm_buy' or {business_model} = 'bm_both'",
+              inputType: "number", min: 0, isRequired: false },
+            { type: "text", name: "main_item_price", title: "Your main product — your selling price (NPR)",
+              visibleIf: "{business_model} = 'bm_buy' or {business_model} = 'bm_both'",
+              inputType: "number", min: 0, isRequired: false }
           ]
         },
+        /* ── Page 3: Customers ── */
         {
-          name: "relationship", title: "Customers and credit",
+          name: "relationship",
+          title: "Customer Relationships",
           elements: [
-            { type: "radiogroup", name: "repeat_share", title: "How many of your customers are repeat buyers?", isRequired: true,
-              choices: ["Below 25%", "25-50%", "51-75%", "More than 75%"] },
-            { type: "checkbox", name: "discovery_mode", title: "How do customers usually find you?", isRequired: true,
-              choices: ["Voice call / shouting", "Fixed time habit", "Phone call / SMS", "Neighbor word-of-mouth", "Social media", "Other"] },
-            { type: "radiogroup", name: "offers_credit", title: "Do you give credit (khata / udhaaro) to regular customers?", isRequired: true,
-              choices: ["Yes regularly", "Sometimes", "No"] },
-            { type: "radiogroup", name: "credit_customers", title: "How many customers have running credit?",
-              visibleIf: "{offers_credit} = 'Yes regularly' or {offers_credit} = 'Sometimes'", isRequired: true,
-              choices: ["1-5", "6-15", "16-30", "More than 30"] },
-            { type: "radiogroup", name: "credit_tracking", title: "How do you track credit / debts?",
-              visibleIf: "{offers_credit} = 'Yes regularly' or {offers_credit} = 'Sometimes'", isRequired: true,
-              choices: ["Paper notebook", "Memory only", "Phone notes", "Other"] },
-            { type: "checkbox", name: "credit_problems", title: "Biggest problems with credit / debts?",
-              visibleIf: "{offers_credit} = 'Yes regularly' or {offers_credit} = 'Sometimes'", isRequired: true,
-              choices: ["Customers forget to pay", "Hard to keep track", "Leads to disputes", "No major problem"] }
+            { type: "radiogroup", name: "repeat_share", title: "Out of 100 customers, how many come back again?", isRequired: true,
+              choices: [
+                { value: "rs_under25", text: "Less than 25" },
+                { value: "rs_25_50", text: "25–50" },
+                { value: "rs_50_75", text: "50–75" },
+                { value: "rs_over75", text: "More than 75" },
+                { value: "_skip", text: "Prefer not to answer" }
+              ]
+            },
+            { type: "checkbox", name: "discovery_mode", title: "How do customers find you?", isRequired: false,
+              choices: [
+                { value: "dm_voice", text: "Voice call / shouting" },
+                { value: "dm_habit", text: "Fixed time habit" },
+                { value: "dm_phone", text: "Phone call / SMS" },
+                { value: "dm_neighbor", text: "Neighbors tell each other" },
+                { value: "dm_social", text: "Social media" },
+                { value: "dm_other", text: "Other" }
+              ]
+            },
+            { type: "radiogroup", name: "offers_credit", title: "Do you give products now and get paid later?", isRequired: true,
+              description: "Do customers take goods and pay you another day?",
+              choices: [
+                { value: "oc_yes", text: "Yes, regularly" },
+                { value: "oc_sometimes", text: "Sometimes" },
+                { value: "oc_no", text: "No" },
+                { value: "_skip", text: "Prefer not to answer" }
+              ]
+            },
+            { type: "radiogroup", name: "credit_customers", title: "How many customers owe you money?",
+              visibleIf: "{offers_credit} = 'oc_yes' or {offers_credit} = 'oc_sometimes'", isRequired: false,
+              choices: [
+                { value: "cc_1_5", text: "1–5" },
+                { value: "cc_6_15", text: "6–15" },
+                { value: "cc_16_30", text: "16–30" },
+                { value: "cc_over30", text: "30+" }
+              ]
+            },
+            { type: "radiogroup", name: "credit_tracking", title: "How do you track who owes you?",
+              visibleIf: "{offers_credit} = 'oc_yes' or {offers_credit} = 'oc_sometimes'", isRequired: false,
+              choices: [
+                { value: "ct_paper", text: "Paper notebook" },
+                { value: "ct_memory", text: "Memory only" },
+                { value: "ct_phone", text: "Phone notes" },
+                { value: "ct_other", text: "Other" }
+              ]
+            },
+            { type: "checkbox", name: "credit_problems", title: "What problems do you face with credit?",
+              visibleIf: "{offers_credit} = 'oc_yes' or {offers_credit} = 'oc_sometimes'", isRequired: false,
+              choices: [
+                { value: "cp_forget", text: "Customers forget to pay" },
+                { value: "cp_track", text: "Hard to keep track" },
+                { value: "cp_dispute", text: "Leads to arguments" },
+                { value: "cp_none", text: "No big problem" }
+              ]
+            }
           ]
         },
+        /* ── Page 4: Features ── */
         {
-          name: "features", title: "Problems and features",
+          name: "features",
+          title: "Challenges & Features",
           elements: [
-            { type: "checkbox", name: "pain_points", title: "Top problems you face today (pick up to 3)", isRequired: true, maxSelectedChoices: 3,
-              choices: ["Low customer reach", "Unpredictable demand", "No repeat customer tracking", "Spoilage or waste",
-                        "Payment collection issues", "No easy billing", "Credit / debt tracking", "Bad weather disruption"] },
-            { type: "checkbox", name: "top_features", title: "Pick the 3 features most important to you", isRequired: true, maxSelectedChoices: 3,
-              choices: ["Nearby customer alert", "Built-in calculator", "Product identifier", "Digital bill",
-                        "Credit / debt book (khata)", "Promotion broadcast", "Daily sales summary"] },
-            { type: "comment", name: "feature_missing", title: "Any feature or tool you wish you had?" }
+            { type: "checkbox", name: "pain_points", title: "What are the biggest problems in your business? (Pick up to 3)", isRequired: true,
+              maxSelectedChoices: 3, showNoneItem: true, noneText: "Prefer not to answer",
+              choices: [
+                { value: "pp_reach", text: "Not enough customers" },
+                { value: "pp_demand", text: "Don't know what will sell" },
+                { value: "pp_repeat", text: "Can't track repeat customers" },
+                { value: "pp_spoilage", text: "Goods spoil / go to waste" },
+                { value: "pp_payment", text: "Hard to collect payments" },
+                { value: "pp_billing", text: "No easy way to make bills" },
+                { value: "pp_credit", text: "Credit / debt tracking is hard" },
+                { value: "pp_weather", text: "Bad weather hurts sales" }
+              ]
+            },
+            { type: "checkbox", name: "top_features", title: "Which app features would help you most? (Pick up to 3)", isRequired: true,
+              maxSelectedChoices: 3, showNoneItem: true, noneText: "Prefer not to answer",
+              choices: [
+                { value: "tf_alert", text: "Customer notification — tell nearby people you are open" },
+                { value: "tf_billing", text: "Bill maker — make a receipt, calculate total automatically" },
+                { value: "tf_product_id", text: "Product scan — use camera to find product name and price" },
+                { value: "tf_credit_book", text: "Debt tracker — record who owes you, send reminders" },
+                { value: "tf_promo", text: "Promotion message — send deals to nearby customers" },
+                { value: "tf_summary", text: "Daily sales view — see how much you sold and earned today" },
+                { value: "tf_storefront", text: "Online product page — show your products on the internet" }
+              ]
+            },
+            { type: "comment", name: "feature_missing", title: "Any feature you wish you had?",
+              isRequired: false, maxLength: 300 }
           ]
         },
+        /* ── Page 5: Market & Digital (NEW) ── */
         {
-          name: "pricing", title: "Pricing",
+          name: "market",
+          title: "Market & Digital",
           elements: [
-            { type: "checkbox", name: "premium_features",
-              title: "The core Nirmi app is free. Which premium features would you pay for?",
-              description: "Select all that interest you. You can also select none.",
-              choices: ["Promotional push to nearby customers", "Credit / debt book with reminders",
-                        "Advanced sales reports", "Bulk messaging to repeat customers",
-                        "Custom digital storefront", "Priority support"] },
-            { type: "radiogroup", name: "monthly_budget", title: "How much would you pay per month for premium features?",
-              visibleIf: "{premium_features} notempty", isRequired: true,
-              choices: ["NPR 50-100", "NPR 100-200", "NPR 200-500", "NPR 500+"] }
+            { type: "radiogroup", name: "smartphone_use", title: "Do you use a phone for business?", isRequired: false,
+              description: "WhatsApp, digital payments, looking up prices, etc.",
+              choices: [
+                { value: "su_whatsapp", text: "Yes — WhatsApp, payments, etc." },
+                { value: "su_personal", text: "I have a smartphone but don't use it for business" },
+                { value: "su_basic", text: "I only have a basic phone" },
+                { value: "su_none", text: "I don't have a phone" }
+              ]
+            },
+            { type: "radiogroup", name: "nearby_competitors", title: "How many similar vendors are near you?", isRequired: false,
+              description: "Vendors selling similar products within walking distance.",
+              choices: [
+                { value: "nc_none", text: "None — I'm the only one" },
+                { value: "nc_1_3", text: "1–3 vendors" },
+                { value: "nc_4_10", text: "4–10 vendors" },
+                { value: "nc_over10", text: "More than 10" }
+              ]
+            },
+            { type: "radiogroup", name: "daily_waste", title: "How much of your goods go unsold each day?", isRequired: false,
+              choices: [
+                { value: "dw_none", text: "Almost nothing is wasted" },
+                { value: "dw_little", text: "A little (less than 10%)" },
+                { value: "dw_quarter", text: "Some (about 10–25%)" },
+                { value: "dw_half", text: "A lot (25% or more)" }
+              ]
+            }
           ]
         },
+        /* ── Page 6: Pricing ── */
         {
-          name: "contact", title: "Contact and suggestions",
+          name: "pricing",
+          title: "Pricing",
           elements: [
-            { type: "text", name: "contact_phone", title: "Phone number (optional)", inputType: "tel" },
-            { type: "text", name: "contact_email", title: "Email address (optional)", inputType: "email" },
-            { type: "comment", name: "suggestions", title: "Any requests, suggestions, or ideas for us?",
-              description: "Tell us anything — what would make your daily work easier?" }
+            { type: "checkbox", name: "premium_features", title: "Which premium features would you pay for?",
+              isRequired: false,
+              description: "Select any that interest you. It's OK to select none.",
+              choices: [
+                { value: "pf_promo", text: "Push deals to nearby customers" },
+                { value: "pf_credit", text: "Debt book with payment reminders" },
+                { value: "pf_reports", text: "Detailed sales reports" },
+                { value: "pf_bulk_msg", text: "Bulk messaging to repeat customers" },
+                { value: "pf_storefront", text: "Your own online product page" },
+                { value: "pf_support", text: "Priority support" }
+              ]
+            },
+            { type: "radiogroup", name: "monthly_budget", title: "How much can you pay per month for premium features?",
+              visibleIf: "{premium_features.length} > 0", isRequired: false,
+              choices: [
+                { value: "mb_50_100", text: "NPR 50–100" },
+                { value: "mb_100_200", text: "NPR 100–200" },
+                { value: "mb_200_500", text: "NPR 200–500" },
+                { value: "mb_over500", text: "NPR 500+" }
+              ]
+            }
+          ]
+        },
+        /* ── Page 7: Contact ── */
+        {
+          name: "contact",
+          title: "Contact",
+          elements: [
+            { type: "html", name: "contact_intro", html: "<p style='font-size:0.9rem;color:#888;margin-bottom:8px;'>Share your details so we can keep you updated on new features. All fields are optional.</p>" },
+            { type: "text", name: "contact_name", title: "Your name (optional)", isRequired: false, maxLength: 80 },
+            { type: "text", name: "contact_phone", title: "Phone number (optional)", isRequired: false, inputType: "tel" },
+            { type: "text", name: "contact_email", title: "Email (optional)", isRequired: false, inputType: "email" },
+            { type: "comment", name: "suggestions", title: "Any suggestions or ideas?", isRequired: false, maxLength: 500 }
           ]
         }
       ]
@@ -342,198 +517,351 @@
        ══════════════════════════════════════════════════════ */
     const STRINGS = {
       ne: {
-        pageTitle: "निर्मी — विक्रेता अनुसन्धान",
-        pageSubtitle: "कृपया यो छोटो फारम भर्नुहोस्। ४–५ मिनेट लाग्छ।",
-        introText: "यो निर्मी एपको लागि बजार अनुसन्धान हो। तपाईंको जवाफले एपलाई तपाईंको आवश्यकताअनुसार बनाउन मद्दत गर्छ।",
-        langLabel: "भाषा",
-        labelSession: "सत्र", labelArea: "क्षेत्र", labelInterviewer: "अन्तर्वार्ताकार",
-        submitting: "पेश गर्दैछ…",
-        thankYou: "धन्यवाद!",
-        resultOk: "तपाईंको जवाफ सफलतापूर्वक पेश गरियो।",
-        resultFailed: "पेश गर्न असफल",
-        resultFailedDetail: "इन्टरनेट जाँच गर्नुहोस् र पुन: प्रयास गर्नुहोस्।",
-        noEndpoint: "सर्भर ठेगाना कन्फिगर गरिएको छैन।",
-        retryBtn: "पुन: प्रयास", copyBtn: "डाटा कपी", newBtn: "नयाँ जवाफ",
-        copiedMsg: "कपी भयो।", noCopyMsg: "कपी गर्न सकिएन।",
-        countdown: (n) => n === 1 ? "अन्तिम खण्ड!" : `${n} खण्ड बाँकी`,
-        encourage: ["राम्रो सुरुवात!", "राम्रो चलिरहेको छ!", "बिचमा पुग्नुभयो!", "लगभग सकिँदैछ!", "अझ अलि!", "अन्तिम चरणमा!"]
+        pageTitle: "निर्मी — बजार सर्वेक्षण",
+        pageSubtitle: "तपाईँको व्यापार बुझ्न मद्दत गर्नुहोस्",
+        introText: "तपाईँको जवाफले हामीलाई तपाईँको लागि राम्रो app बनाउन मद्दत गर्छ।",
+        langLabel: "भाषा:",
+        labelSession: "Session:",
+        labelArea: "ठाउँ:",
+        labelInterviewer: "अन्तर्वार्ताकार:",
+        submitting: "पठाउँदै छौँ…",
+        thankYou: "धन्यवाद! 🎉",
+        resultOk: "तपाईँको जवाफ सुरक्षित भयो।",
+        resultFailed: "पठाउन सकिएन",
+        resultFailedDetail: "कृपया फेरि प्रयास गर्नुहोस् वा जवाफ copy गर्नुहोस्।",
+        noEndpoint: "Server ठेगाना छैन।",
+        retryBtn: "फेरि पठाउनुहोस्",
+        copyBtn: "जवाफ copy गर्नुहोस्",
+        newBtn: "नयाँ सर्वेक्षण",
+        copiedMsg: "Copy भयो!",
+        noCopyMsg: "Copy हुन सकेन। कृपया manually गर्नुहोस्।",
+        celebrationText: "धन्यवाद! 🎉",
+        contactIntro: "नयाँ सुविधा र offer बारे जानकारी दिन हामीलाई सम्पर्क दिनुहोस्। सबै field ऐच्छिक छन्।",
+        countdown: n => n === 1 ? "१ पृष्ठ बाँकी" : `${n} पृष्ठ बाँकी`,
+        encourage: ["सुरु गरौँ!", "राम्रो!", "अझै राम्रो!", "लगभग सकियो!", "अन्तिम भाग!", "अलि अलि बाँकी!", "सकिँदै छ!"]
       },
       hi: {
-        pageTitle: "निर्मी — विक्रेता अनुसंधान",
-        pageSubtitle: "कृपया यह छोटा फ़ॉर्म भरें। 4–5 मिनट लगेगा।",
-        introText: "यह निर्मी ऐप के लिए बाज़ार अनुसंधान है। आपके जवाब से हमें ऐप को आपकी ज़रूरतों के अनुसार बनाने में मदद मिलेगी।",
-        langLabel: "भाषा",
-        labelSession: "सत्र", labelArea: "क्षेत्र", labelInterviewer: "साक्षात्कारकर्ता",
-        submitting: "जमा हो रहा है…",
-        thankYou: "धन्यवाद!",
-        resultOk: "आपका जवाब सफलतापूर्वक जमा हो गया।",
-        resultFailed: "जमा करने में विफल",
-        resultFailedDetail: "इंटरनेट जाँचें और पुनः प्रयास करें।",
-        noEndpoint: "सर्वर पता कॉन्फ़िगर नहीं है।",
-        retryBtn: "पुनः प्रयास", copyBtn: "डेटा कॉपी", newBtn: "नया जवाब",
-        copiedMsg: "कॉपी हो गया।", noCopyMsg: "कॉपी नहीं हो सका।",
-        countdown: (n) => n === 1 ? "आखिरी भाग!" : `${n} भाग बाकी`,
-        encourage: ["अच्छी शुरुआत!", "बहुत बढ़िया!", "बीच में पहुँचे!", "लगभग हो गया!", "बस थोड़ा सा!", "आखिरी चरण!"]
+        pageTitle: "निर्मी — बाज़ार सर्वेक्षण",
+        pageSubtitle: "आपके कारोबार को समझने में मदद करें",
+        introText: "आपके जवाब से हमें आपके लिए बेहतर app बनाने में मदद मिलेगी।",
+        langLabel: "भाषा:",
+        labelSession: "Session:",
+        labelArea: "इलाक़ा:",
+        labelInterviewer: "साक्षात्कारकर्ता:",
+        submitting: "भेज रहे हैं…",
+        thankYou: "धन्यवाद! 🎉",
+        resultOk: "आपका जवाब सुरक्षित हो गया।",
+        resultFailed: "भेज नहीं पाए",
+        resultFailedDetail: "कृपया फिर से कोशिश करें या जवाब copy करें।",
+        noEndpoint: "Server का पता नहीं।",
+        retryBtn: "फिर भेजें",
+        copyBtn: "जवाब copy करें",
+        newBtn: "नया सर्वेक्षण",
+        copiedMsg: "Copy हो गया!",
+        noCopyMsg: "Copy नहीं हो सका।",
+        celebrationText: "धन्यवाद! 🎉",
+        contactIntro: "नई सुविधाओं की जानकारी के लिए अपना संपर्क दें। सब ऐच्छिक है।",
+        countdown: n => n === 1 ? "1 पेज बाक़ी" : `${n} पेज बाक़ी`,
+        encourage: ["शुरू करते हैं!", "बढ़िया!", "और अच्छा!", "लगभग हो गया!", "आख़िरी हिस्सा!", "बस थोड़ा बाक़ी!", "ख़त्म हो रहा है!"]
       },
       en: {
-        pageTitle: "Nirmi — Vendor Research",
-        pageSubtitle: "Please answer this short form. It takes about 4–5 minutes.",
-        introText: "This is market research for the Nirmi app. Your answers help us build the app around your real needs.",
-        langLabel: "Language",
-        labelSession: "Session", labelArea: "Area", labelInterviewer: "Interviewer",
+        pageTitle: "Nirmi — Vendor Survey",
+        pageSubtitle: "Help us understand your business",
+        introText: "Your answers help us build a better app for you.",
+        langLabel: "Language:",
+        labelSession: "Session:",
+        labelArea: "Area:",
+        labelInterviewer: "Interviewer:",
         submitting: "Submitting…",
-        thankYou: "Thank you!",
-        resultOk: "Your response was submitted successfully.",
+        thankYou: "Thank you! 🎉",
+        resultOk: "Your response has been saved.",
         resultFailed: "Submission failed",
-        resultFailedDetail: "Check your internet connection and try again.",
-        noEndpoint: "No submission endpoint configured.",
-        retryBtn: "Retry", copyBtn: "Copy data", newBtn: "New response",
-        copiedMsg: "Copied.", noCopyMsg: "Could not copy.",
-        countdown: (n) => n === 1 ? "Last section!" : `${n} sections left`,
-        encourage: ["Great start!", "You're doing great!", "Halfway there!", "Almost done!", "Just a bit more!", "Final stretch!"]
+        resultFailedDetail: "Please retry or copy your response.",
+        noEndpoint: "No server endpoint configured.",
+        retryBtn: "Retry",
+        copyBtn: "Copy response",
+        newBtn: "New survey",
+        copiedMsg: "Copied!",
+        noCopyMsg: "Could not copy. Please do it manually.",
+        celebrationText: "Thank you! 🎉",
+        contactIntro: "Share your details so we can keep you updated. All fields optional.",
+        countdown: n => n === 1 ? "1 page left" : `${n} pages left`,
+        encourage: ["Let's go!", "Great!", "Even better!", "Almost done!", "Final stretch!", "Nearly there!", "Wrapping up!"]
       }
     };
 
     /* ══════════════════════════════════════════════════════
-       Survey i18n (ne / hi)
+       SurveyJS Locale Strings
+       ══════════════════════════════════════════════════════ */
+    function registerLocales() {
+      Survey.surveyLocalization.locales["ne"] = {
+        pagePrevText: "अघिल्लो",
+        pageNextText: "अर्को",
+        completeText: "पेश गर्नुहोस्",
+        requiredError: "कृपया यो प्रश्नको जवाफ दिनुहोस्।",
+        numericError: "कृपया अंक मात्र लेख्नुहोस्।",
+        maxSelectError: "कृपया {0} वटाभन्दा बढी नछान्नुहोस्।",
+        otherRequiredError: "कृपया अरू विवरण लेख्नुहोस्।"
+      };
+      Survey.surveyLocalization.locales["hi"] = {
+        pagePrevText: "पिछला",
+        pageNextText: "अगला",
+        completeText: "जमा करें",
+        requiredError: "कृपया इस सवाल का जवाब दें।",
+        numericError: "कृपया केवल अंक लिखें।",
+        maxSelectError: "कृपया {0} से ज़्यादा न चुनें।",
+        otherRequiredError: "कृपया अन्य का विवरण दें।"
+      };
+    }
+
+    /* ══════════════════════════════════════════════════════
+       Translations — Nepali (simple, everyday words)
        ══════════════════════════════════════════════════════ */
     const SURVEY_I18N = {
       ne: {
         submit: "पेश गर्नुहोस्",
         pages: {
-          business: "तपाईंको व्यापार", income: "आम्दानी र नाफा",
-          relationship: "ग्राहक र उधारो", features: "समस्या र सुविधा",
-          pricing: "मूल्य", contact: "सम्पर्क र सुझाव"
+          business: "तपाईँको व्यापार",
+          income: "आम्दानी र बिक्री",
+          relationship: "ग्राहकसँग सम्बन्ध",
+          features: "समस्या र चाहिने सुविधा",
+          market: "बजार र फोन",
+          pricing: "मूल्य",
+          contact: "सम्पर्क"
         },
         questions: {
-          vendor_type: "तपाईं के बेच्नुहुन्छ?",
-          selling_mode: "तपाईं कसरी बेच्नुहुन्छ?",
-          travel_hours: "दिनमा कति घण्टा हिँडेर बेच्नुहुन्छ?",
-          travel_km: "दिनमा लगभग कति दूरी?",
+          vendor_name: "तपाईँको नाम (चाहेमा मात्र)",
+          vendor_type: "तपाईँ के बेच्नुहुन्छ?",
+          selling_mode: "तपाईँ कसरी बेच्नुहुन्छ?",
+          transport_mode: "सामान कसरी लैजानुहुन्छ?",
+          carry_weight_kg: "एक पटकमा कति किलो सामान लैजानुहुन्छ?",
+          travel_hours: "दिनमा कति घण्टा हिँड्नुहुन्छ?",
+          travel_km: "एक दिनमा कति टाढा जानुहुन्छ?",
           stops_per_day: "दिनमा कति ठाउँमा रोकिनुहुन्छ?",
-          spot_hours: "दिनमा कति घण्टा बिक्री ठाउँमा बस्नुहुन्छ?",
-          location_type: "बिक्री ठाउँको प्रकार",
-          shop_type: "पसलको प्रकार",
-          shift_window: "मुख्य बिक्री समय",
-          customers_band: "प्रति पाली ग्राहक (अनुमानित)",
-          revenue_band: "प्रति पाली कुल आम्दानी (रु.)",
-          business_model: "तपाईं मुख्यतया सामान किन्नुहुन्छ कि बनाउनुहुन्छ?",
-          profit_margin: "प्रत्येक रु. १०० को बिक्रीमा, लगभग कति नाफा हुन्छ?",
-          main_item_cost: "मुख्य सामानको लागत (रु.)",
-          main_item_price: "मुख्य सामानको बिक्री मूल्य (रु.)",
-          repeat_share: "कति ग्राहक दोहोर्याउने हुन्?",
-          discovery_mode: "ग्राहकले तपाईंलाई कसरी भेट्टाउँछन्?",
-          offers_credit: "के तपाईं नियमित ग्राहकलाई उधारो (खाता) दिनुहुन्छ?",
-          credit_customers: "कति ग्राहकको उधारो चलिरहेको छ?",
-          credit_tracking: "उधारो कसरी ट्र्याक गर्नुहुन्छ?",
-          credit_problems: "उधारोको समस्याहरू?",
-          pain_points: "आजका मुख्य समस्याहरू (३ सम्म छान्नुहोस्)",
-          top_features: "तपाईंका लागि सबैभन्दा महत्त्वपूर्ण ३ सुविधा छान्नुहोस्",
-          feature_missing: "कुनै सुविधा वा उपकरण चाहनुहुन्छ?",
-          premium_features: "मूल एप निःशुल्क छ। कुन प्रिमियम सुविधाका लागि तिर्नुहुन्छ?",
-          monthly_budget: "प्रिमियम सुविधाका लागि मासिक कति तिर्नुहुन्छ?",
-          contact_phone: "फोन नम्बर (ऐच्छिक)",
-          contact_email: "इमेल ठेगाना (ऐच्छिक)",
-          suggestions: "कुनै अनुरोध, सुझाव वा विचार?"
+          spot_hours: "दिनमा कति घण्टा बस्नुहुन्छ?",
+          location_type: "कहाँ बस्नुहुन्छ?",
+          shop_type: "पसल कस्तो छ?",
+          shift_window: "कुन बेलामा बेच्नुहुन्छ?",
+          customers_band: "एक दिनमा कति जना ग्राहक आउँछन्?",
+          revenue_band: "एक दिनमा कति रुपैयाँको सामान बिक्छ?",
+          business_model: "तपाईँ चाहिने सामान किन्नुहुन्छ कि बनाउनुहुन्छ?",
+          profit_margin: "१०० रुपैयाँको सामान बेच्दा कति नाफा हुन्छ?",
+          main_item_cost: "मुख्य सामान — तपाईँले कतिमा किन्नुहुन्छ? (रु.)",
+          main_item_price: "मुख्य सामान — तपाईँले कतिमा बेच्नुहुन्छ? (रु.)",
+          repeat_share: "१०० जना ग्राहकमध्ये कति जना फेरि आउँछन्?",
+          discovery_mode: "ग्राहकले तपाईँलाई कसरी पत्ता लगाउँछन्?",
+          offers_credit: "के तपाईँ ग्राहकलाई सामान दिएर पछि पैसा लिनुहुन्छ?",
+          credit_customers: "कति जनालाई यसरी दिनुभएको छ?",
+          credit_tracking: "उधारोको हिसाब कसरी राख्नुहुन्छ?",
+          credit_problems: "उधारोमा के समस्या छ?",
+          pain_points: "तपाईँको व्यापारमा सबैभन्दा ठूलो समस्या के हो? (३ वटा छान्नुहोस्)",
+          top_features: "कुन सुविधा तपाईँलाई सबैभन्दा बढी काम लाग्छ? (३ वटा छान्नुहोस्)",
+          feature_missing: "अरू कुनै सुविधा चाहिन्छ?",
+          smartphone_use: "के तपाईँ फोनबाट व्यापार गर्नुहुन्छ?",
+          nearby_competitors: "तपाईँ जस्तै कति जना बेच्ने नजिकमा छन्?",
+          daily_waste: "दिनमा कति सामान बिक्दैन / खेर जान्छ?",
+          premium_features: "कुन सुविधाका लागि पैसा तिर्नुहुन्छ?",
+          monthly_budget: "प्रिमियम सुविधाका लागि महिनामा कति तिर्न सक्नुहुन्छ?",
+          contact_name: "तपाईँको नाम (चाहेमा मात्र)",
+          contact_phone: "फोन नम्बर (चाहेमा मात्र)",
+          contact_email: "Email (चाहेमा मात्र)",
+          suggestions: "कुनै सुझाव / बिचार?"
         },
         descriptions: {
-          premium_features: "रुचि लाग्ने सबै छान्नुहोस्। केही नछान्नु पनि ठिक छ।",
-          suggestions: "हामीलाई जे पनि भन्नुहोस् — के ले तपाईंको दैनिक काम सजिलो बनाउँछ?"
+          profit_margin: "१०० रुपैयाँ पाउँदा खर्च काटेर कति बाँकी हुन्छ?",
+          offers_credit: "ग्राहकले सामान लिन्छन् र अर्को दिन पैसा दिन्छन्?",
+          smartphone_use: "WhatsApp, digital payment, भाउ हेर्ने, आदि।",
+          nearby_competitors: "हिँडेर पुग्ने दूरीमा कति जना उस्तै सामान बेच्छन्?",
+          premium_features: "रुचि लागेको सबै छान्नुहोस्। नछान्नु पनि हुन्छ।",
+          suggestions: "जे पनि भन्नुहोस् — तपाईँको दैनिक काम कसरी सजिलो हुन्छ?"
         },
         choices: {
-          vendor_type: [{v:"Vegetables",t:"तरकारी"},{v:"Fruits",t:"फलफूल"},{v:"Snacks",t:"खाजा"},{v:"Dairy",t:"दुग्ध"},{v:"Mixed groceries",t:"मिश्रित किराना"},{v:"Cooked food",t:"पकाएको खाना"},{v:"Other",t:"अन्य"}],
-          selling_mode: [{v:"Mobile cart",t:"हिँडेर बेच्ने (ठेला/गाडा)"},{v:"Stationary spot",t:"एकै ठाउँमा बस्ने"},{v:"Permanent shop",t:"पक्की पसल"}],
-          travel_km: [{v:"Less than 2 km",t:"२ किमी भन्दा कम"},{v:"2-5 km",t:"२–५ किमी"},{v:"5-10 km",t:"५–१० किमी"},{v:"More than 10 km",t:"१०+ किमी"}],
-          stops_per_day: [{v:"1-3",t:"१–३"},{v:"4-6",t:"४–६"},{v:"7-10",t:"७–१०"},{v:"10+",t:"१०+"}],
-          location_type: [{v:"Sidewalk / footpath",t:"सडकछेउ / फुटपाथ"},{v:"Market area",t:"बजार क्षेत्र"},{v:"Intersection / chowk",t:"चोक / क्रसिङ"},{v:"Temple / shrine area",t:"मन्दिर क्षेत्र"},{v:"Other",t:"अन्य"}],
-          shop_type: [{v:"Rented space",t:"भाडाको ठाउँ"},{v:"Own building",t:"आफ्नै भवन"},{v:"Market stall",t:"बजारको स्टल"},{v:"Other",t:"अन्य"}],
-          shift_window: [{v:"Morning",t:"बिहान"},{v:"Afternoon",t:"दिउँसो"},{v:"Evening",t:"साँझ"},{v:"All day",t:"दिनभर"}],
-          customers_band: [{v:"1-10",t:"१–१०"},{v:"11-20",t:"११–२०"},{v:"21-40",t:"२१–४०"},{v:"41-70",t:"४१–७०"},{v:"71-100",t:"७१–१००"},{v:"100+",t:"१००+"}],
-          revenue_band: [{v:"Below 1000",t:"रु. १००० भन्दा कम"},{v:"1000-2000",t:"रु. १०००–२०००"},{v:"2000-4000",t:"रु. २०००–४०००"},{v:"4000-7000",t:"रु. ४०००–७०००"},{v:"7000-12000",t:"रु. ७०००–१२०००"},{v:"12000+",t:"रु. १२०००+"}],
-          business_model: [{v:"Resell as-is",t:"किनेर बेच्छु (रिसेल)"},{v:"Make or prepare myself",t:"आफै बनाउँछु/पकाउँछु"},{v:"Both",t:"दुवै"}],
-          profit_margin: [{v:"Less than 10",t:"रु. १० भन्दा कम"},{v:"10-20",t:"रु. १०–२०"},{v:"20-35",t:"रु. २०–३५"},{v:"35-50",t:"रु. ३५–५०"},{v:"More than 50",t:"रु. ५० भन्दा बढी"}],
-          repeat_share: [{v:"Below 25%",t:"२५% भन्दा कम"},{v:"25-50%",t:"२५–५०%"},{v:"51-75%",t:"५१–७५%"},{v:"More than 75%",t:"७५% भन्दा बढी"}],
-          discovery_mode: [{v:"Voice call / shouting",t:"आवाज/कराउँदै"},{v:"Fixed time habit",t:"निश्चित समय बानी"},{v:"Phone call / SMS",t:"फोन/SMS"},{v:"Neighbor word-of-mouth",t:"छिमेकीको भनाइ"},{v:"Social media",t:"सोशल मिडिया"},{v:"Other",t:"अन्य"}],
-          offers_credit: [{v:"Yes regularly",t:"नियमित रूपमा दिन्छु"},{v:"Sometimes",t:"कहिलेकाहीं"},{v:"No",t:"दिन्न"}],
-          credit_customers: [{v:"1-5",t:"१–५"},{v:"6-15",t:"६–१५"},{v:"16-30",t:"१६–३०"},{v:"More than 30",t:"३०+"}],
-          credit_tracking: [{v:"Paper notebook",t:"कागजको कापी/खाता"},{v:"Memory only",t:"सम्झनामा मात्र"},{v:"Phone notes",t:"फोनमा नोट"},{v:"Other",t:"अन्य"}],
-          credit_problems: [{v:"Customers forget to pay",t:"ग्राहकले बिर्सन्छन्"},{v:"Hard to keep track",t:"ट्र्याक गर्न गाह्रो"},{v:"Leads to disputes",t:"विवाद हुन्छ"},{v:"No major problem",t:"ठूलो समस्या छैन"}],
-          pain_points: [{v:"Low customer reach",t:"कम ग्राहक पहुँच"},{v:"Unpredictable demand",t:"अनिश्चित माग"},{v:"No repeat customer tracking",t:"दोहोर्याउने ग्राहक ट्र्याकिङ छैन"},{v:"Spoilage or waste",t:"बिग्रने/फोहोर"},{v:"Payment collection issues",t:"भुक्तानी सङ्कलन समस्या"},{v:"No easy billing",t:"सजिलो बिलिङ छैन"},{v:"Credit / debt tracking",t:"उधारो/खाता ट्र्याकिङ"},{v:"Bad weather disruption",t:"खराब मौसम"}],
-          top_features: [{v:"Nearby customer alert",t:"नजिकको ग्राहक सूचना"},{v:"Built-in calculator",t:"बिल्ट-इन क्याल्कुलेटर"},{v:"Product identifier",t:"उत्पादन पहिचानकर्ता"},{v:"Digital bill",t:"डिजिटल बिल"},{v:"Credit / debt book (khata)",t:"उधारो/खाता किताब"},{v:"Promotion broadcast",t:"प्रचार प्रसारण"},{v:"Daily sales summary",t:"दैनिक बिक्री सारांश"}],
-          premium_features: [{v:"Promotional push to nearby customers",t:"नजिकका ग्राहकलाई प्रचार सूचना"},{v:"Credit / debt book with reminders",t:"रिमाइन्डर सहित उधारो किताब"},{v:"Advanced sales reports",t:"विस्तृत बिक्री विश्लेषण"},{v:"Bulk messaging to repeat customers",t:"दोहोर्याउने ग्राहकलाई सामूहिक सन्देश"},{v:"Custom digital storefront",t:"डिजिटल स्टोरफ्रन्ट"},{v:"Priority support",t:"प्राथमिकता सहायता"}],
-          monthly_budget: [{v:"NPR 50-100",t:"रु. ५०–१००"},{v:"NPR 100-200",t:"रु. १००–२००"},{v:"NPR 200-500",t:"रु. २००–५००"},{v:"NPR 500+",t:"रु. ५००+"}]
-        }
+          vendor_type: [{v:"vt_veg",t:"तरकारी"},{v:"vt_fruit",t:"फलफूल"},{v:"vt_snack",t:"खाजा"},{v:"vt_dairy",t:"दूध/दही"},{v:"vt_grocery",t:"किराना"},{v:"vt_cooked",t:"पकाएको खाना"},{v:"vt_other",t:"अरू"}],
+          selling_mode: [{v:"sm_mobile",t:"हिँडेर बेच्छु (ठेला/गाडा)"},{v:"sm_stationary",t:"एउटै ठाउँमा बस्छु"},{v:"sm_permanent",t:"पक्की पसल"},{v:"_skip",t:"जवाफ दिन चाहन्न"}],
+          transport_mode: [{v:"tm_cart",t:"ठेला / हातगाडा"},{v:"tm_moto",t:"मोटरसाइकल"},{v:"tm_bicycle",t:"साइकल"},{v:"tm_foot",t:"पैदल / टाउकोमा"},{v:"tm_auto",t:"अटो / टेम्पो"}],
+          carry_weight_kg: [{v:"cw_under5",t:"५ किलोभन्दा कम"},{v:"cw_5_10",t:"५–१० किलो"},{v:"cw_10_20",t:"१०–२० किलो"},{v:"cw_20_30",t:"२०–३० किलो"},{v:"cw_over30",t:"३० किलोभन्दा बढी"}],
+          travel_km: [{v:"tk_under2",t:"२ किलोमिटरभन्दा कम"},{v:"tk_2_5",t:"२–५ किलोमिटर"},{v:"tk_5_10",t:"५–१० किलोमिटर"},{v:"tk_over10",t:"१० किलोमिटरभन्दा बढी"}],
+          stops_per_day: [{v:"sd_1_3",t:"१–३"},{v:"sd_4_6",t:"४–६"},{v:"sd_7_10",t:"७–१०"},{v:"sd_over10",t:"१०+"}],
+          location_type: [{v:"lt_sidewalk",t:"सडक छेउ"},{v:"lt_market",t:"बजार"},{v:"lt_intersection",t:"चोक"},{v:"lt_temple",t:"मन्दिर नजिक"},{v:"lt_other",t:"अरू"}],
+          shop_type: [{v:"st_rented",t:"भाडाको ठाउँ"},{v:"st_own",t:"आफ्नो घर"},{v:"st_stall",t:"बजारको स्टल"},{v:"st_other",t:"अरू"}],
+          shift_window: [{v:"sw_morning",t:"बिहान"},{v:"sw_afternoon",t:"दिउँसो"},{v:"sw_evening",t:"बेलुका"},{v:"sw_allday",t:"दिनभर"},{v:"_skip",t:"जवाफ दिन चाहन्न"}],
+          customers_band: [{v:"cb_1_10",t:"१–१०"},{v:"cb_11_20",t:"११–२०"},{v:"cb_21_40",t:"२१–४०"},{v:"cb_41_70",t:"४१–७०"},{v:"cb_71_100",t:"७१–१००"},{v:"cb_over100",t:"१००+"},{v:"_skip",t:"जवाफ दिन चाहन्न"}],
+          revenue_band: [{v:"rb_under1k",t:"रु. १,००० भन्दा कम"},{v:"rb_1k_2k",t:"रु. १,०००–२,०००"},{v:"rb_2k_4k",t:"रु. २,०००–४,०००"},{v:"rb_4k_7k",t:"रु. ४,०००–७,०००"},{v:"rb_7k_12k",t:"रु. ७,०००–१२,०००"},{v:"rb_over12k",t:"रु. १२,०००+"},{v:"_skip",t:"जवाफ दिन चाहन्न"}],
+          business_model: [{v:"bm_buy",t:"किनेर बेच्छु"},{v:"bm_make",t:"आफै बनाउँछु"},{v:"bm_both",t:"दुवै"},{v:"_skip",t:"जवाफ दिन चाहन्न"}],
+          profit_margin: [{v:"pm_under10",t:"१० रुपैयाँभन्दा कम"},{v:"pm_10_20",t:"१०–२० रुपैयाँ"},{v:"pm_20_35",t:"२०–३५ रुपैयाँ"},{v:"pm_35_50",t:"३५–५० रुपैयाँ"},{v:"pm_over50",t:"५० रुपैयाँभन्दा बढी"},{v:"_skip",t:"जवाफ दिन चाहन्न"}],
+          repeat_share: [{v:"rs_under25",t:"२५ जनाभन्दा कम"},{v:"rs_25_50",t:"२५–५०"},{v:"rs_50_75",t:"५०–७५"},{v:"rs_over75",t:"७५ भन्दा बढी"},{v:"_skip",t:"जवाफ दिन चाहन्न"}],
+          discovery_mode: [{v:"dm_voice",t:"आवाज लगाउँछु / कराउँछु"},{v:"dm_habit",t:"नियमित समयमा आउँछन्"},{v:"dm_phone",t:"फोन / SMS"},{v:"dm_neighbor",t:"छिमेकीले भन्छन्"},{v:"dm_social",t:"Facebook / social media"},{v:"dm_other",t:"अरू"}],
+          offers_credit: [{v:"oc_yes",t:"हो, नियमित"},{v:"oc_sometimes",t:"कहिलेकाहीँ"},{v:"oc_no",t:"गर्दिन"},{v:"_skip",t:"जवाफ दिन चाहन्न"}],
+          credit_customers: [{v:"cc_1_5",t:"१–५"},{v:"cc_6_15",t:"६–१५"},{v:"cc_16_30",t:"१६–३०"},{v:"cc_over30",t:"३०+"}],
+          credit_tracking: [{v:"ct_paper",t:"कागजमा लेख्छु"},{v:"ct_memory",t:"सम्झनामा"},{v:"ct_phone",t:"फोनमा"},{v:"ct_other",t:"अरू"}],
+          credit_problems: [{v:"cp_forget",t:"ग्राहक बिर्सन्छन्"},{v:"cp_track",t:"हिसाब राख्न गाह्रो"},{v:"cp_dispute",t:"झगडा हुन्छ"},{v:"cp_none",t:"ठूलो समस्या छैन"}],
+          pain_points: [{v:"pp_reach",t:"ग्राहक कम आउँछन्"},{v:"pp_demand",t:"के बिक्छ थाहा हुँदैन"},{v:"pp_repeat",t:"फेरि आउने ग्राहक पत्ता लाग्दैन"},{v:"pp_spoilage",t:"सामान सड्छ / खेर जान्छ"},{v:"pp_payment",t:"पैसा उठाउन गाह्रो"},{v:"pp_billing",t:"बिल बनाउन सजिलो छैन"},{v:"pp_credit",t:"उधारो हिसाब गाह्रो"},{v:"pp_weather",t:"खराब मौसमले बिक्री घट्छ"}],
+          top_features: [{v:"tf_alert",t:"ग्राहकलाई सूचना — म यहाँ छु भन्ने message"},{v:"tf_billing",t:"बिल बनाउने — जोड घटाउ र लिखित बिल"},{v:"tf_product_id",t:"सामान पहिचान — photo ले नाम र भाउ पत्ता लगाउने"},{v:"tf_credit_book",t:"उधारो किताब — कसलाई कति दिइयो, सम्झाउने message"},{v:"tf_promo",t:"प्रचार पठाउने — नजिकका मान्छेलाई offer बारे भन्ने"},{v:"tf_summary",t:"दैनिक बिक्री — आज कति कमाएँ हेर्ने"},{v:"tf_storefront",t:"online पसल — आफ्नो सामान internet मा देखाउने"}],
+          premium_features: [{v:"pf_promo",t:"नजिकका ग्राहकलाई deal पठाउने"},{v:"pf_credit",t:"उधारो किताब र सम्झाउने message"},{v:"pf_reports",t:"बिस्तृत बिक्री report"},{v:"pf_bulk_msg",t:"फेरि आउने ग्राहकलाई message"},{v:"pf_storefront",t:"आफ्नो online पसल"},{v:"pf_support",t:"छिटो मद्दत"}],
+          monthly_budget: [{v:"mb_50_100",t:"रु. ५०–१००"},{v:"mb_100_200",t:"रु. १००–२००"},{v:"mb_200_500",t:"रु. २००–५००"},{v:"mb_over500",t:"रु. ५०० भन्दा बढी"}],
+          smartphone_use: [{v:"su_whatsapp",t:"हो — WhatsApp, payment आदि"},{v:"su_personal",t:"फोन छ तर व्यापारमा प्रयोग गर्दिन"},{v:"su_basic",t:"साधा फोन मात्र छ"},{v:"su_none",t:"फोन छैन"}],
+          nearby_competitors: [{v:"nc_none",t:"कोही छैन — म मात्र छु"},{v:"nc_1_3",t:"१–३ जना"},{v:"nc_4_10",t:"४–१० जना"},{v:"nc_over10",t:"१० भन्दा बढी"}],
+          daily_waste: [{v:"dw_none",t:"केही खेर जाँदैन"},{v:"dw_little",t:"अलिकति (१०% भन्दा कम)"},{v:"dw_quarter",t:"केही (करिब १०–२५%)"},{v:"dw_half",t:"धेरै (२५% भन्दा बढी)"}]
+        },
+        noneText: "जवाफ दिन चाहन्न"
       },
       hi: {
         submit: "जमा करें",
         pages: {
-          business: "आपका व्यापार", income: "आय और मुनाफ़ा",
-          relationship: "ग्राहक और उधार", features: "समस्याएँ और सुविधाएँ",
-          pricing: "मूल्य", contact: "संपर्क और सुझाव"
+          business: "आपका कारोबार",
+          income: "आमदनी और बिक्री",
+          relationship: "ग्राहकों से रिश्ता",
+          features: "समस्या और सुविधाएँ",
+          market: "बाज़ार और फ़ोन",
+          pricing: "क़ीमत",
+          contact: "संपर्क"
         },
         questions: {
+          vendor_name: "आपका नाम (अगर देना चाहें)",
           vendor_type: "आप क्या बेचते हैं?",
           selling_mode: "आप कैसे बेचते हैं?",
-          travel_hours: "दिन में कितने घंटे घूमकर बेचते हैं?",
-          travel_km: "दिन में लगभग कितनी दूरी?",
+          transport_mode: "सामान कैसे ले जाते हैं?",
+          carry_weight_kg: "एक बार में कितना किलो सामान ले जाते हैं?",
+          travel_hours: "दिन में कितने घंटे चलते हैं?",
+          travel_km: "एक दिन में कितना दूर जाते हैं?",
           stops_per_day: "दिन में कितनी जगह रुकते हैं?",
-          spot_hours: "दिन में कितने घंटे बिक्री स्थान पर बैठते हैं?",
-          location_type: "बिक्री स्थान का प्रकार",
-          shop_type: "दुकान का प्रकार",
-          shift_window: "मुख्य बिक्री समय",
-          customers_band: "प्रति पाली ग्राहक (अनुमानित)",
-          revenue_band: "प्रति पाली कुल आय (NPR)",
-          business_model: "आप मुख्य रूप से सामान खरीदकर बेचते हैं या खुद बनाते हैं?",
-          profit_margin: "हर ₹100 की बिक्री में, लगभग कितना मुनाफ़ा होता है?",
-          main_item_cost: "मुख्य सामान की लागत (₹)",
-          main_item_price: "मुख्य सामान का बिक्री मूल्य (₹)",
-          repeat_share: "कितने ग्राहक दोबारा आते हैं?",
-          discovery_mode: "ग्राहकों को आप कैसे मिलते हैं?",
-          offers_credit: "क्या आप नियमित ग्राहकों को उधार (खाता) देते हैं?",
-          credit_customers: "कितने ग्राहकों का उधार चल रहा है?",
-          credit_tracking: "उधार कैसे ट्रैक करते हैं?",
-          credit_problems: "उधार की समस्याएँ?",
-          pain_points: "आज की मुख्य समस्याएँ (3 तक चुनें)",
-          top_features: "आपके लिए सबसे महत्वपूर्ण 3 सुविधाएँ चुनें",
-          feature_missing: "कोई सुविधा या उपकरण जो आप चाहते हैं?",
-          premium_features: "मूल ऐप मुफ़्त है। कौन सी प्रीमियम सुविधाओं के लिए भुगतान करेंगे?",
-          monthly_budget: "प्रीमियम सुविधाओं के लिए मासिक कितना देंगे?",
-          contact_phone: "फ़ोन नंबर (वैकल्पिक)",
-          contact_email: "ईमेल पता (वैकल्पिक)",
-          suggestions: "कोई अनुरोध, सुझाव या विचार?"
+          spot_hours: "दिन में कितने घंटे बैठते हैं?",
+          location_type: "कहाँ बैठते हैं?",
+          shop_type: "दुकान कैसी है?",
+          shift_window: "कब बेचते हैं?",
+          customers_band: "एक दिन में कितने ग्राहक आते हैं?",
+          revenue_band: "एक दिन में कितने रुपये का सामान बिकता है?",
+          business_model: "आप सामान ख़रीदकर बेचते हैं या ख़ुद बनाते हैं?",
+          profit_margin: "१०० रुपये का सामान बेचने पर कितना मुनाफ़ा होता है?",
+          main_item_cost: "मुख्य सामान — आप कितने में ख़रीदते हैं? (रु.)",
+          main_item_price: "मुख्य सामान — आप कितने में बेचते हैं? (रु.)",
+          repeat_share: "१०० ग्राहकों में से कितने दोबारा आते हैं?",
+          discovery_mode: "ग्राहक आपको कैसे ढूँढ़ते हैं?",
+          offers_credit: "क्या आप ग्राहकों को सामान देकर बाद में पैसे लेते हैं?",
+          credit_customers: "कितने लोगों को ऐसे दिया है?",
+          credit_tracking: "उधार का हिसाब कैसे रखते हैं?",
+          credit_problems: "उधार में क्या दिक़्क़त होती है?",
+          pain_points: "आपके कारोबार की सबसे बड़ी समस्या क्या है? (३ चुनें)",
+          top_features: "कौन सी सुविधा आपके सबसे ज़्यादा काम आएगी? (३ चुनें)",
+          feature_missing: "और कोई सुविधा चाहिए?",
+          smartphone_use: "क्या आप फ़ोन से कारोबार करते हैं?",
+          nearby_competitors: "आपके पास कितने और बेचने वाले हैं?",
+          daily_waste: "दिन में कितना सामान नहीं बिकता / बर्बाद होता है?",
+          premium_features: "किन सुविधाओं के लिए पैसे देंगे?",
+          monthly_budget: "प्रीमियम सुविधाओं के लिए महीने में कितना दे सकते हैं?",
+          contact_name: "आपका नाम (अगर देना चाहें)",
+          contact_phone: "फ़ोन नंबर (अगर देना चाहें)",
+          contact_email: "ईमेल (अगर देना चाहें)",
+          suggestions: "कोई सुझाव / विचार?"
         },
         descriptions: {
-          premium_features: "रुचि की सभी चुनें। कुछ न चुनना भी ठीक है।",
-          suggestions: "हमें कुछ भी बताएँ — क्या आपके दैनिक काम को आसान बनाएगा?"
+          profit_margin: "१०० रुपये मिलने पर ख़र्च निकालकर कितना बचता है?",
+          offers_credit: "ग्राहक सामान ले जाते हैं और बाद में पैसे देते हैं?",
+          smartphone_use: "WhatsApp, digital payment, दाम देखना, वग़ैरह।",
+          nearby_competitors: "पैदल दूरी में कितने लोग वैसा ही सामान बेचते हैं?",
+          premium_features: "पसंद की सब चुनें। कुछ न चुनना भी ठीक है।",
+          suggestions: "कुछ भी बताएँ — आपका रोज़ का काम कैसे आसान होगा?"
         },
         choices: {
-          vendor_type: [{v:"Vegetables",t:"सब्ज़ी"},{v:"Fruits",t:"फल"},{v:"Snacks",t:"नाश्ता"},{v:"Dairy",t:"दूध/डेयरी"},{v:"Mixed groceries",t:"मिश्रित किराना"},{v:"Cooked food",t:"पका हुआ खाना"},{v:"Other",t:"अन्य"}],
-          selling_mode: [{v:"Mobile cart",t:"घूमकर बेचना (ठेला/गाड़ी)"},{v:"Stationary spot",t:"एक जगह बैठकर"},{v:"Permanent shop",t:"पक्की दुकान"}],
-          travel_km: [{v:"Less than 2 km",t:"2 किमी से कम"},{v:"2-5 km",t:"2–5 किमी"},{v:"5-10 km",t:"5–10 किमी"},{v:"More than 10 km",t:"10+ किमी"}],
-          stops_per_day: [{v:"1-3",t:"1–3"},{v:"4-6",t:"4–6"},{v:"7-10",t:"7–10"},{v:"10+",t:"10+"}],
-          location_type: [{v:"Sidewalk / footpath",t:"सड़क किनारे / फुटपाथ"},{v:"Market area",t:"बाज़ार क्षेत्र"},{v:"Intersection / chowk",t:"चौक / क्रॉसिंग"},{v:"Temple / shrine area",t:"मंदिर क्षेत्र"},{v:"Other",t:"अन्य"}],
-          shop_type: [{v:"Rented space",t:"किराये की जगह"},{v:"Own building",t:"अपनी इमारत"},{v:"Market stall",t:"बाज़ार का स्टॉल"},{v:"Other",t:"अन्य"}],
-          shift_window: [{v:"Morning",t:"सुबह"},{v:"Afternoon",t:"दोपहर"},{v:"Evening",t:"शाम"},{v:"All day",t:"पूरा दिन"}],
-          customers_band: [{v:"1-10",t:"1–10"},{v:"11-20",t:"11–20"},{v:"21-40",t:"21–40"},{v:"41-70",t:"41–70"},{v:"71-100",t:"71–100"},{v:"100+",t:"100+"}],
-          revenue_band: [{v:"Below 1000",t:"₹1000 से कम"},{v:"1000-2000",t:"₹1000–2000"},{v:"2000-4000",t:"₹2000–4000"},{v:"4000-7000",t:"₹4000–7000"},{v:"7000-12000",t:"₹7000–12000"},{v:"12000+",t:"₹12000+"}],
-          business_model: [{v:"Resell as-is",t:"खरीदकर बेचता हूँ (रीसेल)"},{v:"Make or prepare myself",t:"खुद बनाता/बनाती हूँ"},{v:"Both",t:"दोनों"}],
-          profit_margin: [{v:"Less than 10",t:"₹10 से कम"},{v:"10-20",t:"₹10–20"},{v:"20-35",t:"₹20–35"},{v:"35-50",t:"₹35–50"},{v:"More than 50",t:"₹50 से अधिक"}],
-          repeat_share: [{v:"Below 25%",t:"25% से कम"},{v:"25-50%",t:"25–50%"},{v:"51-75%",t:"51–75%"},{v:"More than 75%",t:"75% से अधिक"}],
-          discovery_mode: [{v:"Voice call / shouting",t:"आवाज़/पुकार"},{v:"Fixed time habit",t:"निश्चित समय आदत"},{v:"Phone call / SMS",t:"फ़ोन/SMS"},{v:"Neighbor word-of-mouth",t:"पड़ोसियों का बताना"},{v:"Social media",t:"सोशल मीडिया"},{v:"Other",t:"अन्य"}],
-          offers_credit: [{v:"Yes regularly",t:"नियमित रूप से देता हूँ"},{v:"Sometimes",t:"कभी-कभी"},{v:"No",t:"नहीं देता"}],
-          credit_customers: [{v:"1-5",t:"1–5"},{v:"6-15",t:"6–15"},{v:"16-30",t:"16–30"},{v:"More than 30",t:"30+"}],
-          credit_tracking: [{v:"Paper notebook",t:"कागज़ की कॉपी/खाता"},{v:"Memory only",t:"याद में"},{v:"Phone notes",t:"फ़ोन पर नोट"},{v:"Other",t:"अन्य"}],
-          credit_problems: [{v:"Customers forget to pay",t:"ग्राहक भूल जाते हैं"},{v:"Hard to keep track",t:"ट्रैक करना मुश्किल"},{v:"Leads to disputes",t:"विवाद होते हैं"},{v:"No major problem",t:"कोई बड़ी समस्या नहीं"}],
-          pain_points: [{v:"Low customer reach",t:"कम ग्राहक पहुँच"},{v:"Unpredictable demand",t:"अनिश्चित माँग"},{v:"No repeat customer tracking",t:"दोबारा ग्राहक ट्रैकिंग नहीं"},{v:"Spoilage or waste",t:"खराब होना/बर्बादी"},{v:"Payment collection issues",t:"भुगतान वसूली समस्या"},{v:"No easy billing",t:"आसान बिलिंग नहीं"},{v:"Credit / debt tracking",t:"उधार/खाता ट्रैकिंग"},{v:"Bad weather disruption",t:"खराब मौसम"}],
-          top_features: [{v:"Nearby customer alert",t:"नज़दीकी ग्राहक सूचना"},{v:"Built-in calculator",t:"बिल्ट-इन कैलकुलेटर"},{v:"Product identifier",t:"उत्पाद पहचानकर्ता"},{v:"Digital bill",t:"डिजिटल बिल"},{v:"Credit / debt book (khata)",t:"उधार/खाता किताब"},{v:"Promotion broadcast",t:"प्रचार प्रसारण"},{v:"Daily sales summary",t:"दैनिक बिक्री सारांश"}],
-          premium_features: [{v:"Promotional push to nearby customers",t:"पास के ग्राहकों को प्रचार सूचना"},{v:"Credit / debt book with reminders",t:"रिमाइंडर के साथ उधार किताब"},{v:"Advanced sales reports",t:"विस्तृत बिक्री विश्लेषण"},{v:"Bulk messaging to repeat customers",t:"दोबारा ग्राहकों को सामूहिक संदेश"},{v:"Custom digital storefront",t:"डिजिटल स्टोरफ्रंट"},{v:"Priority support",t:"प्राथमिकता सहायता"}],
-          monthly_budget: [{v:"NPR 50-100",t:"₹50–100"},{v:"NPR 100-200",t:"₹100–200"},{v:"NPR 200-500",t:"₹200–500"},{v:"NPR 500+",t:"₹500+"}]
-        }
+          vendor_type: [{v:"vt_veg",t:"सब्ज़ी"},{v:"vt_fruit",t:"फल"},{v:"vt_snack",t:"खाजा / नाश्ता"},{v:"vt_dairy",t:"दूध / दही"},{v:"vt_grocery",t:"किराना"},{v:"vt_cooked",t:"पका खाना"},{v:"vt_other",t:"और कुछ"}],
+          selling_mode: [{v:"sm_mobile",t:"घूमकर बेचता हूँ (ठेला / गाड़ी)"},{v:"sm_stationary",t:"एक जगह बैठकर"},{v:"sm_permanent",t:"पक्की दुकान"},{v:"_skip",t:"जवाब नहीं देना"}],
+          transport_mode: [{v:"tm_cart",t:"ठेला / हाथगाड़ी"},{v:"tm_moto",t:"मोटरसाइकिल"},{v:"tm_bicycle",t:"साइकिल"},{v:"tm_foot",t:"पैदल / सिर पर"},{v:"tm_auto",t:"ऑटो / टेम्पो"}],
+          carry_weight_kg: [{v:"cw_under5",t:"५ किलो से कम"},{v:"cw_5_10",t:"५–१० किलो"},{v:"cw_10_20",t:"१०–२० किलो"},{v:"cw_20_30",t:"२०–३० किलो"},{v:"cw_over30",t:"३० किलो से ज़्यादा"}],
+          travel_km: [{v:"tk_under2",t:"२ किलोमीटर से कम"},{v:"tk_2_5",t:"२–५ किलोमीटर"},{v:"tk_5_10",t:"५–१० किलोमीटर"},{v:"tk_over10",t:"१० किलोमीटर से ज़्यादा"}],
+          stops_per_day: [{v:"sd_1_3",t:"१–३"},{v:"sd_4_6",t:"४–६"},{v:"sd_7_10",t:"७–१०"},{v:"sd_over10",t:"१०+"}],
+          location_type: [{v:"lt_sidewalk",t:"सड़क किनारे"},{v:"lt_market",t:"बाज़ार"},{v:"lt_intersection",t:"चौक"},{v:"lt_temple",t:"मंदिर के पास"},{v:"lt_other",t:"और कहीं"}],
+          shop_type: [{v:"st_rented",t:"किराये की जगह"},{v:"st_own",t:"अपना मकान"},{v:"st_stall",t:"बाज़ार का स्टॉल"},{v:"st_other",t:"और कुछ"}],
+          shift_window: [{v:"sw_morning",t:"सुबह"},{v:"sw_afternoon",t:"दोपहर"},{v:"sw_evening",t:"शाम"},{v:"sw_allday",t:"पूरा दिन"},{v:"_skip",t:"जवाब नहीं देना"}],
+          customers_band: [{v:"cb_1_10",t:"१–१०"},{v:"cb_11_20",t:"११–२०"},{v:"cb_21_40",t:"२१–४०"},{v:"cb_41_70",t:"४१–७०"},{v:"cb_71_100",t:"७१–१००"},{v:"cb_over100",t:"१००+"},{v:"_skip",t:"जवाब नहीं देना"}],
+          revenue_band: [{v:"rb_under1k",t:"रु. १,००० से कम"},{v:"rb_1k_2k",t:"रु. १,०००–२,०००"},{v:"rb_2k_4k",t:"रु. २,०००–४,०००"},{v:"rb_4k_7k",t:"रु. ४,०००–७,०००"},{v:"rb_7k_12k",t:"रु. ७,०००–१२,०००"},{v:"rb_over12k",t:"रु. १२,०००+"},{v:"_skip",t:"जवाब नहीं देना"}],
+          business_model: [{v:"bm_buy",t:"ख़रीदकर बेचता हूँ"},{v:"bm_make",t:"ख़ुद बनाता हूँ"},{v:"bm_both",t:"दोनों"},{v:"_skip",t:"जवाब नहीं देना"}],
+          profit_margin: [{v:"pm_under10",t:"१० रुपये से कम"},{v:"pm_10_20",t:"१०–२० रुपये"},{v:"pm_20_35",t:"२०–३५ रुपये"},{v:"pm_35_50",t:"३५–५० रुपये"},{v:"pm_over50",t:"५० रुपये से ज़्यादा"},{v:"_skip",t:"जवाब नहीं देना"}],
+          repeat_share: [{v:"rs_under25",t:"२५ से कम"},{v:"rs_25_50",t:"२५–५०"},{v:"rs_50_75",t:"५०–७५"},{v:"rs_over75",t:"७५ से ज़्यादा"},{v:"_skip",t:"जवाब नहीं देना"}],
+          discovery_mode: [{v:"dm_voice",t:"आवाज़ लगाता हूँ"},{v:"dm_habit",t:"तय वक़्त पर आते हैं"},{v:"dm_phone",t:"फ़ोन / SMS"},{v:"dm_neighbor",t:"पड़ोसी बताते हैं"},{v:"dm_social",t:"Facebook / social media"},{v:"dm_other",t:"और कुछ"}],
+          offers_credit: [{v:"oc_yes",t:"हाँ, नियमित रूप से"},{v:"oc_sometimes",t:"कभी-कभी"},{v:"oc_no",t:"नहीं"},{v:"_skip",t:"जवाब नहीं देना"}],
+          credit_customers: [{v:"cc_1_5",t:"१–५"},{v:"cc_6_15",t:"६–१५"},{v:"cc_16_30",t:"१६–३०"},{v:"cc_over30",t:"३०+"}],
+          credit_tracking: [{v:"ct_paper",t:"काग़ज़ पर लिखता हूँ"},{v:"ct_memory",t:"याद में"},{v:"ct_phone",t:"फ़ोन पर"},{v:"ct_other",t:"और कुछ"}],
+          credit_problems: [{v:"cp_forget",t:"ग्राहक भूल जाते हैं"},{v:"cp_track",t:"हिसाब रखना मुश्किल"},{v:"cp_dispute",t:"झगड़ा होता है"},{v:"cp_none",t:"कोई बड़ी दिक़्क़त नहीं"}],
+          pain_points: [{v:"pp_reach",t:"ग्राहक कम आते हैं"},{v:"pp_demand",t:"क्या बिकेगा पता नहीं"},{v:"pp_repeat",t:"दोबारा आने वाले ग्राहक ट्रैक नहीं कर पाते"},{v:"pp_spoilage",t:"सामान ख़राब हो जाता है"},{v:"pp_payment",t:"पैसे वसूलना मुश्किल"},{v:"pp_billing",t:"बिल बनाना आसान नहीं"},{v:"pp_credit",t:"उधार का हिसाब मुश्किल"},{v:"pp_weather",t:"ख़राब मौसम से बिक्री घटती है"}],
+          top_features: [{v:"tf_alert",t:"ग्राहक को सूचना — मैं यहाँ हूँ बेच रहा हूँ"},{v:"tf_billing",t:"बिल बनाना — जोड़ घटाव और लिखित बिल"},{v:"tf_product_id",t:"सामान पहचान — फ़ोटो से नाम और दाम पता करना"},{v:"tf_credit_book",t:"उधार किताब — किसको कितना दिया, याद दिलाने का message"},{v:"tf_promo",t:"प्रचार भेजना — पास के लोगों को offer बताना"},{v:"tf_summary",t:"रोज़ की बिक्री — आज कितना कमाया देखना"},{v:"tf_storefront",t:"online दुकान — अपना सामान internet पर दिखाना"}],
+          premium_features: [{v:"pf_promo",t:"पास के ग्राहकों को deal भेजना"},{v:"pf_credit",t:"उधार किताब और याद दिलाना"},{v:"pf_reports",t:"बिक्री की पूरी report"},{v:"pf_bulk_msg",t:"दोबारा आने वालों को message"},{v:"pf_storefront",t:"अपनी online दुकान"},{v:"pf_support",t:"जल्दी मदद"}],
+          monthly_budget: [{v:"mb_50_100",t:"रु. ५०–१००"},{v:"mb_100_200",t:"रु. १००–२००"},{v:"mb_200_500",t:"रु. २००–५००"},{v:"mb_over500",t:"रु. ५०० से ज़्यादा"}],
+          smartphone_use: [{v:"su_whatsapp",t:"हाँ — WhatsApp, payment वग़ैरह"},{v:"su_personal",t:"फ़ोन है पर कारोबार में इस्तेमाल नहीं"},{v:"su_basic",t:"सादा फ़ोन है"},{v:"su_none",t:"फ़ोन नहीं है"}],
+          nearby_competitors: [{v:"nc_none",t:"कोई नहीं — सिर्फ़ मैं हूँ"},{v:"nc_1_3",t:"१–३ लोग"},{v:"nc_4_10",t:"४–१० लोग"},{v:"nc_over10",t:"१० से ज़्यादा"}],
+          daily_waste: [{v:"dw_none",t:"कुछ बर्बाद नहीं होता"},{v:"dw_little",t:"थोड़ा (१०% से कम)"},{v:"dw_quarter",t:"कुछ (करीब १०–२५%)"},{v:"dw_half",t:"बहुत (२५% से ज़्यादा)"}]
+        },
+        noneText: "जवाब नहीं देना"
       }
     };
 
     /* ══════════════════════════════════════════════════════
-       Functions
+       Help Text (per question, with choice explanations)
+       ══════════════════════════════════════════════════════ */
+    const HELP_TEXT = {
+      ne: {
+        vendor_type: { title: "तपाईँ के बेच्नुहुन्छ?", body: "तपाईँले बेच्ने सबै किसिमको सामान छान्नुहोस्। एउटा भन्दा बढी छान्न सकिन्छ।" },
+        selling_mode: { title: "कसरी बेच्नुहुन्छ?", body: "<b>हिँडेर</b> = ठेला, साइकल वा पैदल हिँडेर बेच्ने।<br><b>एउटै ठाउँमा</b> = सडक छेउ वा बजारमा बसेर बेच्ने।<br><b>पक्की पसल</b> = छत र भित्ता भएको पसल।" },
+        transport_mode: { title: "सामान कसरी लैजानुहुन्छ?", body: "तपाईँले बेच्ने सामान लैजाने मुख्य तरिका।" },
+        carry_weight_kg: { title: "कति किलो?", body: "एक पटकमा लैजाने सामानको अन्दाजी तौल।" },
+        customers_band: { title: "ग्राहक कति?", body: "एक सामान्य दिनमा कति फरक मान्छेले तपाईँसँग किन्छन्?" },
+        revenue_band: { title: "दैनिक बिक्री", body: "एक दिनमा जम्मा कति रुपैयाँ आउँछ — खर्च काट्नु अघि।" },
+        business_model: { title: "किन्ने कि बनाउने?", body: "<b>किनेर बेच्छु</b> = अरूसँग सामान किनेर ग्राहकलाई बेच्ने।<br><b>आफै बनाउँछु</b> = आफूले तयार गरेर बेच्ने।" },
+        profit_margin: { title: "नाफा कति?", body: "तपाईँले १०० रुपैयाँमा बेच्नुभयो भने, खर्च (किन्ने भाउ, भाडा आदि) काटेर कति बाँकी हुन्छ?" },
+        repeat_share: { title: "फेरि आउने ग्राहक", body: "१०० जना ग्राहक सोच्नुहोस्। कतिले पहिले पनि तपाईँसँग किनेका छन्?" },
+        offers_credit: { title: "उधारो", body: "ग्राहकले सामान लैजान्छन् र पैसा पछि दिन्छन्? यसलाई उधारो भनिन्छ।" },
+        credit_tracking: { title: "उधारो हिसाब", body: "कसले कति रुपैयाँ तिर्न बाँकी छ भन्ने कसरी सम्झनुहुन्छ?" },
+        pain_points: { title: "ठूला समस्या", body: "तपाईँको व्यापारमा दैनिक हुने सबैभन्दा गाह्रो कुरा। ३ वटामात्र छान्नुहोस्।" },
+        top_features: { title: "काम लाग्ने सुविधा", body: "<b>ग्राहक सूचना</b> — तपाईँ नजिक छु भन्ने message नजिकका मान्छेलाई।<br><b>बिल बनाउने</b> — सामानको जोड गरेर लिखित बिल बनाइदिन्छ।<br><b>सामान पहिचान</b> — फोनको camera ले सामानको नाम र भाउ पत्ता लगाउँछ।<br><b>उधारो किताब</b> — कसलाई कति दिनुभयो सबै record हुन्छ, सम्झाउने message जान्छ।<br><b>प्रचार पठाउने</b> — तपाईँको offer बारे नजिकका मान्छेलाई message।<br><b>दैनिक बिक्री</b> — आज कति बिक्यो, कति कमायो एकैचोटि हेर्ने।<br><b>online पसल</b> — तपाईँको सामानको सूची internet मा हुन्छ, ग्राहकले हेर्न सक्छन्।" },
+        smartphone_use: { title: "फोन प्रयोग", body: "तपाईँ फोनबाट कुनै व्यापारिक काम गर्नुहुन्छ? जस्तै WhatsApp मा order लिने, digital payment लिने, भाउ check गर्ने।" },
+        nearby_competitors: { title: "नजिकका प्रतिस्पर्धी", body: "तपाईँको बेच्ने ठाउँको नजिकमा कति जना उस्तै सामान बेच्छन्?" },
+        daily_waste: { title: "खेर जाने सामान", body: "दिनमा ल्याएको सामानमध्ये कति बिक्दैन र फाल्नुपर्छ?" },
+        premium_features: { title: "पैसा तिर्ने सुविधा", body: "यी सुविधामध्ये कुनको लागि महिनामा केही रुपैयाँ तिर्न तयार हुनुहुन्छ?" },
+        monthly_budget: { title: "मासिक बजेट", body: "तपाईँ app को premium सुविधाका लागि महिनामा कतिसम्म तिर्न सक्नुहुन्छ?" }
+      },
+      hi: {
+        vendor_type: { title: "आप क्या बेचते हैं?", body: "आप जो भी सामान बेचते हैं सब चुनें। एक से ज़्यादा चुन सकते हैं।" },
+        selling_mode: { title: "कैसे बेचते हैं?", body: "<b>घूमकर</b> = ठेला, साइकिल या पैदल चलकर बेचना।<br><b>एक जगह</b> = सड़क किनारे या बाज़ार में बैठकर।<br><b>पक्की दुकान</b> = छत और दीवार वाली दुकान।" },
+        transport_mode: { title: "सामान कैसे ले जाते हैं?", body: "बेचने का सामान ले जाने का मुख्य तरीक़ा।" },
+        carry_weight_kg: { title: "कितना किलो?", body: "एक बार में ले जाने वाले सामान का अंदाज़ा वज़न।" },
+        customers_band: { title: "ग्राहक कितने?", body: "एक सामान्य दिन में कितने अलग-अलग लोग आपसे ख़रीदते हैं?" },
+        revenue_band: { title: "रोज़ की बिक्री", body: "एक दिन में कुल कितने रुपये का सामान बिकता है — ख़र्च निकालने से पहले।" },
+        business_model: { title: "ख़रीदना या बनाना?", body: "<b>ख़रीदकर बेचना</b> = दूसरों से सामान लेकर ग्राहकों को बेचना।<br><b>ख़ुद बनाना</b> = ख़ुद तैयार करके बेचना।" },
+        profit_margin: { title: "मुनाफ़ा कितना?", body: "१०० रुपये में बेचें तो ख़र्च (ख़रीदी, किराया वग़ैरह) निकालकर कितना बचता है?" },
+        repeat_share: { title: "दोबारा आने वाले", body: "१०० ग्राहक सोचें। कितनों ने पहले भी आपसे ख़रीदा है?" },
+        offers_credit: { title: "उधार", body: "ग्राहक सामान ले जाते हैं और पैसे बाद में देते हैं? इसे उधार कहते हैं।" },
+        credit_tracking: { title: "उधार का हिसाब", body: "किसके कितने रुपये बाक़ी हैं — यह कैसे याद रखते हैं?" },
+        pain_points: { title: "बड़ी समस्याएँ", body: "आपके कारोबार में रोज़ की सबसे मुश्किल बातें। सिर्फ़ ३ चुनें।" },
+        top_features: { title: "काम की सुविधाएँ", body: "<b>ग्राहक सूचना</b> — पास के लोगों को message कि मैं यहाँ बेच रहा हूँ।<br><b>बिल बनाना</b> — सामान का जोड़ और लिखित बिल।<br><b>सामान पहचान</b> — फ़ोन के camera से सामान का नाम और दाम।<br><b>उधार किताब</b> — किसको कितना दिया, सब record, याद दिलाने का message।<br><b>प्रचार भेजना</b> — आपके offer के बारे में पास के लोगों को message।<br><b>रोज़ की बिक्री</b> — आज कितना बिका, कितना कमाया।<br><b>online दुकान</b> — आपके सामान की सूची internet पर, ग्राहक देख सकें।" },
+        smartphone_use: { title: "फ़ोन का इस्तेमाल", body: "क्या आप फ़ोन से कोई कारोबारी काम करते हैं? जैसे WhatsApp पर order, digital payment, दाम check करना।" },
+        nearby_competitors: { title: "आसपास के बेचने वाले", body: "आपकी जगह के पास कितने लोग वैसा ही सामान बेचते हैं?" },
+        daily_waste: { title: "बर्बाद सामान", body: "दिन में लाए सामान में से कितना नहीं बिकता और फेंकना पड़ता है?" },
+        premium_features: { title: "पैसे देकर सुविधा", body: "इन सुविधाओं में से किसके लिए महीने में कुछ रुपये देने को तैयार हैं?" },
+        monthly_budget: { title: "महीने का बजट", body: "App की premium सुविधाओं के लिए महीने में कितना दे सकते हैं?" }
+      },
+      en: {
+        vendor_type: { title: "What do you sell?", body: "Select all types of products you sell. You can pick more than one." },
+        selling_mode: { title: "How do you sell?", body: "<b>Mobile</b> = Walking around with a cart, bicycle, or on foot.<br><b>Stationary</b> = Sitting in one spot (roadside, market).<br><b>Permanent</b> = A fixed shop with roof and walls." },
+        transport_mode: { title: "How do you carry goods?", body: "The main way you transport your selling goods." },
+        carry_weight_kg: { title: "How many kg?", body: "Estimated weight of goods you carry in one trip." },
+        customers_band: { title: "How many customers?", body: "On a typical day, how many different people buy from you?" },
+        revenue_band: { title: "Daily revenue", body: "Total money received from sales in one day, before any expenses." },
+        business_model: { title: "Buy or make?", body: "<b>Buy & resell</b> = Purchase goods from suppliers and sell to customers.<br><b>Make myself</b> = Prepare or produce items yourself." },
+        profit_margin: { title: "How much profit?", body: "If you sell something for 100 rupees, how much is left after paying for the goods, rent, etc.?" },
+        repeat_share: { title: "Repeat customers", body: "Think of 100 customers. How many have bought from you before?" },
+        offers_credit: { title: "Credit / pay later", body: "Do customers take products now and pay you on another day?" },
+        credit_tracking: { title: "Tracking credit", body: "How do you remember who owes you money and how much?" },
+        pain_points: { title: "Biggest problems", body: "The hardest things about your daily business. Pick your top 3." },
+        top_features: { title: "Most useful features", body: "<b>Customer notification</b> — Tells nearby people you're open for business.<br><b>Bill maker</b> — Calculates totals and creates a written receipt.<br><b>Product scan</b> — Point your camera at a product to find its name and price.<br><b>Debt tracker</b> — Records who owes you money, sends them reminders.<br><b>Promotion message</b> — Sends deals to customers near your location.<br><b>Daily sales</b> — See how much you sold and earned today.<br><b>Online product page</b> — Your products listed on the internet for customers to see." },
+        smartphone_use: { title: "Phone for business", body: "Do you use a smartphone for any business tasks? E.g. WhatsApp orders, digital payments, checking prices." },
+        nearby_competitors: { title: "Nearby competitors", body: "How many vendors selling similar products are within walking distance?" },
+        daily_waste: { title: "Unsold goods", body: "How much of the goods you bring to sell don't get sold and go to waste?" },
+        premium_features: { title: "Paid features", body: "Which of these features would you pay a monthly fee for?" },
+        monthly_budget: { title: "Monthly budget", body: "How much would you pay per month for premium app features?" }
+      }
+    };
+
+    /* ══════════════════════════════════════════════════════
+       Utility Functions
        ══════════════════════════════════════════════════════ */
     function byId(id) { return document.getElementById(id); }
 
@@ -562,10 +890,20 @@
       for (const page of patched.pages) {
         if (t.pages[page.name]) page.title = t.pages[page.name];
         for (const el of page.elements || []) {
+          if (el.type === "html") continue;
           if (t.questions[el.name]) el.title = t.questions[el.name];
           if (t.descriptions && t.descriptions[el.name]) el.description = t.descriptions[el.name];
           if (t.choices[el.name]) {
             el.choices = t.choices[el.name].map(c => ({ value: c.v, text: c.t }));
+          }
+          /* Translate noneText for checkboxes */
+          if (el.showNoneItem && t.noneText) {
+            el.noneText = t.noneText;
+          }
+          /* Translate contact intro HTML */
+          if (el.name === "contact_intro") {
+            const s = STRINGS[lang] || STRINGS.en;
+            el.html = `<p style='font-size:0.9rem;color:#888;margin-bottom:8px;'>${s.contactIntro}</p>`;
           }
         }
       }
@@ -647,6 +985,163 @@
       return `R${Date.now().toString(36).toUpperCase()}`;
     }
 
+    /* ── Geolocation + device info ── */
+    let geoData = null;
+    function captureGeolocation() {
+      if (!navigator.geolocation) return;
+      navigator.geolocation.getCurrentPosition(
+        pos => { geoData = { lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy }; },
+        () => { geoData = { error: "denied_or_unavailable" }; },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+      );
+    }
+
+    function getDeviceInfo() {
+      const info = {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform || "",
+        screenWidth: screen.width,
+        screenHeight: screen.height,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        touchSupport: "ontouchstart" in window || navigator.maxTouchPoints > 0,
+        language: navigator.language || ""
+      };
+      if (navigator.connection) {
+        info.connectionType = navigator.connection.effectiveType || "";
+        info.downlink = navigator.connection.downlink || 0;
+      }
+      return info;
+    }
+
+    /* ── Help system ── */
+    function setupHelpSystem(survey, lang) {
+      const helpData = HELP_TEXT[lang] || HELP_TEXT.en;
+      const overlay = byId("helpOverlay");
+      const sheet = byId("helpSheet");
+      const helpTitle = byId("helpTitle");
+      const helpBody = byId("helpBody");
+
+      function closeHelp() {
+        sheet.classList.remove("open");
+        overlay.classList.remove("open");
+      }
+      overlay.addEventListener("click", closeHelp);
+      /* Swipe down to close */
+      let touchStartY = 0;
+      sheet.addEventListener("touchstart", e => { touchStartY = e.touches[0].clientY; }, { passive: true });
+      sheet.addEventListener("touchmove", e => {
+        if (e.touches[0].clientY - touchStartY > 60) closeHelp();
+      }, { passive: true });
+
+      survey.onAfterRenderQuestion.add((sender, options) => {
+        const q = options.question;
+        if (!helpData[q.name]) return;
+        const titleEl = options.htmlElement.querySelector(".sd-question__title");
+        if (!titleEl || titleEl.querySelector(".help-btn")) return;
+        const btn = document.createElement("button");
+        btn.className = "help-btn";
+        btn.type = "button";
+        btn.textContent = "?";
+        btn.setAttribute("aria-label", "Help");
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          const h = helpData[q.name];
+          helpTitle.textContent = h.title;
+          helpBody.innerHTML = h.body;
+          sheet.classList.add("open");
+          overlay.classList.add("open");
+        });
+        titleEl.appendChild(btn);
+      });
+    }
+
+    /* ── Character counter for comment fields ── */
+    function setupCharCounters(survey) {
+      survey.onAfterRenderQuestion.add((sender, options) => {
+        const q = options.question;
+        if ((q.getType() === "comment" || q.getType() === "text") && q.maxLength) {
+          const input = options.htmlElement.querySelector("textarea") || options.htmlElement.querySelector("input[type='text']");
+          if (!input) return;
+          if (input.parentElement.querySelector(".char-counter")) return;
+          const counter = document.createElement("div");
+          counter.className = "char-counter";
+          const update = () => {
+            const len = input.value ? input.value.length : 0;
+            counter.textContent = `${len} / ${q.maxLength}`;
+            counter.classList.toggle("near-limit", len > q.maxLength * 0.8);
+          };
+          update();
+          input.addEventListener("input", update);
+          input.parentElement.appendChild(counter);
+        }
+      });
+    }
+
+    /* ── Auto-advance on radio select ── */
+    function setupAutoAdvance(survey) {
+      survey.onValueChanged.add((sender, options) => {
+        const q = sender.getQuestionByName(options.name);
+        if (!q || q.getType() !== "radiogroup") return;
+        const page = q.page;
+        if (!page) return;
+        const questions = page.questions;
+        const idx = questions.indexOf(q);
+        /* Find next visible question */
+        for (let i = idx + 1; i < questions.length; i++) {
+          if (questions[i].isVisible) {
+            setTimeout(() => {
+              const el = document.getElementById(questions[i].id);
+              if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 150);
+            return;
+          }
+        }
+        /* If last question on page, don't auto-advance page — let user click Next */
+      });
+    }
+
+    /* ── Celebration ── */
+    function showCelebration() {
+      const emojis = ["🎉", "🎊", "✨", "🌟", "💫", "🎈", "🥳", "⭐"];
+      const container = document.createElement("div");
+      container.className = "confetti-container";
+      document.body.appendChild(container);
+      for (let i = 0; i < 28; i++) {
+        const piece = document.createElement("span");
+        piece.className = "confetti-piece";
+        piece.textContent = emojis[i % emojis.length];
+        piece.style.left = (Math.random() * 100) + "%";
+        piece.style.animationDelay = (Math.random() * 0.6) + "s";
+        piece.style.animationDuration = (2 + Math.random() * 2) + "s";
+        container.appendChild(piece);
+      }
+      setTimeout(() => container.remove(), 4500);
+    }
+
+    function showToast(text, duration) {
+      duration = duration || 5000;
+      const toast = document.createElement("div");
+      toast.className = "success-toast";
+      const close = document.createElement("button");
+      close.className = "toast-close";
+      close.textContent = "✕";
+      close.addEventListener("click", () => toast.remove());
+      const emoji = document.createElement("div");
+      emoji.className = "toast-emoji";
+      emoji.textContent = "🎉";
+      const msg = document.createElement("div");
+      msg.className = "toast-text";
+      msg.textContent = text;
+      toast.appendChild(close);
+      toast.appendChild(emoji);
+      toast.appendChild(msg);
+      document.body.appendChild(toast);
+      setTimeout(() => toast.classList.add("toast-fade"), duration - 500);
+      setTimeout(() => { if (toast.parentElement) toast.remove(); }, duration);
+    }
+
+    /* ── Result card state ── */
     function setResultState(state, s, submissionId, errorMsg) {
       const card = byId("resultCard");
       card.classList.add("show");
@@ -670,14 +1165,16 @@
       } else if (state === "success") {
         title.textContent = s.thankYou;
         msg.textContent = s.resultOk;
-        code.textContent = `#${submissionId}`;
+        code.textContent = "#" + submissionId;
         code.classList.remove("hidden");
         newBtn.textContent = s.newBtn;
         newBtn.classList.remove("hidden");
+        showCelebration();
+        showToast(s.celebrationText);
       } else if (state === "error") {
         title.textContent = s.resultFailed;
         msg.textContent = errorMsg || s.resultFailedDetail;
-        code.textContent = `#${submissionId}`;
+        code.textContent = "#" + submissionId;
         code.classList.remove("hidden");
         retry.textContent = s.retryBtn;
         retry.classList.remove("hidden");
@@ -693,6 +1190,10 @@
        Bootstrap
        ══════════════════════════════════════════════════════ */
     function bootstrap() {
+      registerLocales();
+      captureGeolocation();
+      const surveyStartedAt = new Date().toISOString();
+
       const config = parseConfig();
       const lang = detectLang(config.lang);
       config.lang = lang;
@@ -702,6 +1203,9 @@
       byId("metaArea").textContent = config.area;
       byId("metaInterviewer").textContent = config.interviewer;
       applyChrome(lang);
+
+      /* Set SurveyJS locale */
+      Survey.surveyLocalization.currentLocale = lang;
 
       /* Language override */
       byId("langSelect").addEventListener("change", () => {
@@ -730,12 +1234,19 @@
       const surveyJson = localizeSurvey(SURVEY_JSON, lang);
       const survey = new Survey.Model(surveyJson);
       survey.showCompletedPage = false;
+      survey.locale = lang;
+
+      /* Plugins — must register BEFORE render so initial page fires events */
+      setupHelpSystem(survey, lang);
+      setupCharCounters(survey);
+      setupAutoAdvance(survey);
+
       survey.render(byId("surveyContainer"));
 
       updateProgress(survey, s);
       survey.onCurrentPageChanged.add(() => updateProgress(survey, s));
 
-      /* Submit state */
+      /* Submit */
       let lastPayload = null;
 
       async function submitPayload(payload, endpoint) {
@@ -761,16 +1272,19 @@
         const economics = computeEconomics(sender.data);
         const payload = {
           submissionId,
-          surveyVersion: "3.0",
+          surveyVersion: SURVEY_VERSION,
           submittedAt: new Date().toISOString(),
+          surveyStartedAt,
+          surveyDurationMs: Date.now() - new Date(surveyStartedAt).getTime(),
           context: {
             sessionId: config.sid,
             area: config.area,
             interviewer: config.interviewer,
             lang: config.lang,
-            userAgent: navigator.userAgent,
             pageUrl: window.location.href
           },
+          device: getDeviceInfo(),
+          geo: geoData,
           answers: sender.data,
           computed: economics
         };
