@@ -187,7 +187,7 @@
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
     /* ── Progress & Encouragement ── */
@@ -930,13 +930,15 @@
 
       const surveyJson = localizeSurvey(SURVEY_JSON, lang);
       const survey = new Survey.Model(surveyJson);
+      survey.showCompletedPage = false;
       survey.render(byId("surveyContainer"));
 
       updateProgress(survey, s);
       survey.onCurrentPageChanged.add(() => updateProgress(survey, s));
 
-      survey.onComplete.add(async (sender) => {
+      survey.onComplete.add((sender) => {
         byId("progressStrip").classList.add("hidden");
+        byId("surveyCard").classList.add("hidden");
         const submissionId = randomId();
         const economics = computeEconomics(sender.data);
         const payload = {
@@ -960,14 +962,14 @@
           }
         };
 
-        const result = await submitPayload(payload, config.endpoint);
-
-        if (result.ok) {
-          showResult(s.resultOk, submissionId, false);
-          return;
-        }
-
         showResult(s.resultQueued, submissionId, true);
+
+        submitPayload(payload, config.endpoint).then((result) => {
+          if (result.ok) {
+            byId("resultMessage").textContent = s.resultOk;
+            byId("retryBtn").classList.add("hidden");
+          }
+        });
       });
 
       byId("retryBtn").addEventListener("click", async () => {
