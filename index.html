@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nirmi Vendor Survey</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/survey-core@1.12.23/defaultV2.min.css" type="text/css" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1f2e2e;
+      --muted: #647070;
+      --line: #dde5e4;
+      --bg: #f6f8f8;
+      --card: #ffffff;
+      --brand: #0f7660;
+      --warn: #b45309;
+      --good: #166534;
+      --radius: 16px;
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 15% 0%, #eaf7f2 0, #f6f8f8 35%);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 16px 14px 26px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    .brand {
+      display: grid;
+      gap: 12px;
+      align-items: center;
+      justify-items: center;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .brand-logo {
+      width: 86px;
+      height: 86px;
+      border-radius: 20px;
+      background: #f7faf8;
+      border: 1px solid var(--line);
+      padding: 10px;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: clamp(1.15rem, 4vw, 1.6rem);
+      letter-spacing: -0.01em;
+    }
+
+    .brand p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+      line-height: 1.45;
+    }
+
+    .meta-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      margin: 12px 0 0;
+    }
+
+    .meta-item {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fbfcfc;
+      padding: 8px;
+      text-align: left;
+    }
+
+    .meta-item .k {
+      font-size: 0.73rem;
+      color: var(--muted);
+      margin-bottom: 2px;
+    }
+
+    .meta-item .v {
+      font-size: 0.9rem;
+      font-weight: 700;
+      word-break: break-word;
+    }
+
+    .banner {
+      margin-top: 12px;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 0.87rem;
+      line-height: 1.45;
+    }
+
+    .banner.warn {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: var(--warn);
+    }
+
+    .banner.good {
+      background: #ecfdf3;
+      border: 1px solid #bbf7d0;
+      color: var(--good);
+    }
+
+    #surveyCard {
+      margin-top: 12px;
+      overflow: hidden;
+    }
+
+    #surveyContainer {
+      min-height: 340px;
+    }
+
+    .result {
+      margin-top: 12px;
+      display: none;
+      gap: 10px;
+    }
+
+    .result.show {
+      display: grid;
+    }
+
+    .code-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eff6ff;
+      color: #1e3a8a;
+      font-weight: 700;
+      font-size: 0.82rem;
+      width: fit-content;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 9px 12px;
+      background: #fff;
+      color: var(--ink);
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      background: var(--brand);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .mini {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* ── Progress & Encouragement ── */
+
+    .progress-strip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #eaf7f2 0%, #f0f5ff 100%);
+      border: 1px solid var(--line);
+    }
+
+    .progress-ring {
+      position: relative;
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+    }
+
+    .progress-ring svg {
+      transform: rotate(-90deg);
+      width: 42px;
+      height: 42px;
+    }
+
+    .progress-ring .track {
+      fill: none;
+      stroke: var(--line);
+      stroke-width: 4;
+    }
+
+    .progress-ring .fill {
+      fill: none;
+      stroke: var(--brand);
+      stroke-width: 4;
+      stroke-linecap: round;
+      stroke-dasharray: 113;
+      stroke-dashoffset: 113;
+      transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .progress-pct {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--brand);
+    }
+
+    .progress-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .progress-text .countdown {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .progress-text .encourage {
+      font-size: 0.82rem;
+      color: var(--brand);
+      font-weight: 600;
+      animation: fadeSlideIn 0.4s ease-out;
+    }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.85); opacity: 0; }
+      60% { transform: scale(1.04); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .result.show {
+      display: grid;
+      animation: popIn 0.4s ease-out;
+    }
+
+    .card {
+      transition: box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.1);
+    }
+
+    .btn {
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn.primary:hover {
+      box-shadow: 0 4px 14px rgba(15, 118, 96, 0.3);
+    }
+
+    @media (max-width: 620px) {
+      .meta-row {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card brand">
+      <img class="brand-logo" src="./assets/logo.svg" alt="Nirmi logo">
+      <h1 id="pageTitle">Nirmi Vendor Feedback</h1>
+      <p id="pageSubtitle">Please answer this short form. It takes around 3 to 4 minutes.</p>
+      <div class="meta-row">
+        <div class="meta-item">
+          <div class="k" id="labelSession">Session</div>
+          <div class="v" id="metaSession">-</div>
+        </div>
+        <div class="meta-item">
+          <div class="k" id="labelArea">Area</div>
+          <div class="v" id="metaArea">-</div>
+        </div>
+        <div class="meta-item">
+          <div class="k" id="labelInterviewer">Interviewer</div>
+          <div class="v" id="metaInterviewer">-</div>
+        </div>
+      </div>
+      <div id="storageNotice" class="banner warn hidden"></div>
+      <div id="progressStrip" class="progress-strip hidden">
+        <div class="progress-ring">
+          <svg viewBox="0 0 40 40"><circle class="track" cx="20" cy="20" r="18"/><circle id="progressFill" class="fill" cx="20" cy="20" r="18"/></svg>
+          <span class="progress-pct" id="progressPct">0%</span>
+        </div>
+        <div class="progress-text">
+          <span class="countdown" id="countdownText"></span>
+          <span class="encourage" id="encourageText"></span>
+        </div>
+      </div>
+    </section>
+
+    <section id="surveyCard" class="card">
+      <div id="surveyContainer"></div>
+    </section>
+
+    <section id="resultCard" class="card result" aria-live="polite">
+      <h2 id="thankYouTitle" style="margin: 0; font-size: 1.1rem;">Thank you</h2>
+      <p id="resultMessage" class="mini"></p>
+      <span id="submissionCode" class="code-pill"></span>
+      <div class="actions">
+        <button type="button" id="retryBtn" class="btn hidden">Retry queued upload</button>
+        <button type="button" id="copyPayloadBtn" class="btn">Copy backup data</button>
+        <button type="button" id="startOverBtn" class="btn primary">New response</button>
+      </div>
+      <p id="backupNote" class="mini">If upload fails, this page keeps a local backup on this phone until it syncs.</p>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/survey-core@1.12.23/survey.core.min.js"></script>
+  <script src="https://unpkg.com/survey-js-ui@1.12.23/survey-js-ui.min.js"></script>
+  <script>
+    const QUEUE_KEY = "nirmi_vendor_submission_queue_v1";
+    const LAST_PAYLOAD_KEY = "nirmi_vendor_last_payload_v1";
+
+    const BAND_MIDPOINTS = {
+      customers_band: {
+        "1-20": 10,
+        "21-40": 30,
+        "41-70": 55,
+        "71-100": 85,
+        "100+": 120
+      },
+      revenue_band: {
+        "Below 2000": 1500,
+        "2000-4000": 3000,
+        "4001-7000": 5500,
+        "7001-10000": 8500,
+        "10000+": 12000
+      },
+      cost_band: {
+        "Below 1000": 700,
+        "1000-2500": 1800,
+        "2501-4000": 3200,
+        "4001-6000": 5000,
+        "6000+": 7000
+      }
+    };
+
+    const SURVEY_JSON = {
+      showProgressBar: "top",
+      progressBarType: "pages",
+      clearInvisibleValues: "onHidden",
+      checkErrorsMode: "onValueChanged",
+      completeText: "Submit",
+      pages: [
+        {
+          name: "business",
+          title: "Your daily work",
+          elements: [
+            {
+              type: "dropdown",
+              name: "vendor_type",
+              title: "What do you mostly sell?",
+              isRequired: true,
+              choices: [
+                "Vegetables",
+                "Fruits",
+                "Snacks",
+                "Dairy",
+                "Mixed groceries",
+                "Other"
+              ]
+            },
+            {
+              type: "radiogroup",
+              name: "shift_window",
+              title: "Main selling shift",
+              isRequired: true,
+              choices: [
+                "Morning",
+                "Afternoon",
+                "Evening",
+                "Mixed"
+              ]
+            },
+            {
+              type: "radiogroup",
+              name: "customers_band",
+              title: "Customers per shift (approx)",
+              isRequired: true,
+              choices: ["1-20", "21-40", "41-70", "71-100", "100+"]
+            },
+            {
+              type: "text",
+              name: "customers_exact",
+              title: "Exact customers per shift (optional)",
+              inputType: "number"
+            }
+          ]
+        },
+        {
+          name: "economics",
+          title: "Income and cost",
+          elements: [
+            {
+              type: "radiogroup",
+              name: "revenue_band",
+              title: "Total revenue per shift (NPR)",
+              isRequired: true,
+              choices: ["Below 2000", "2000-4000", "4001-7000", "7001-10000", "10000+"]
+            },
+            {
+              type: "text",
+              name: "revenue_exact",
+              title: "Exact revenue per shift (optional)",
+              inputType: "number"
+            },
+            {
+              type: "radiogroup",
+              name: "cost_band",
+              title: "Total daily cost per shift (NPR)",
+              isRequired: true,
+              choices: ["Below 1000", "1000-2500", "2501-4000", "4001-6000", "6000+"]
+            },
+            {
+              type: "text",
+              name: "cost_exact",
+              title: "Exact cost per shift (optional)",
+              inputType: "number"
+            }
+          ]
+        },
+        {
+          name: "relationship",
+          title: "Customer relationship",
+          elements: [
+            {
+              type: "radiogroup",
+              name: "repeat_share",
+              title: "How many customers are repeat buyers?",
+              isRequired: true,
+              choices: ["Below 25%", "25-50%", "51-75%", "More than 75%"]
+            },
+            {
+              type: "radiogroup",
+              name: "discovery_mode",
+              title: "How do customers usually know you are nearby?",
+              isRequired: true,
+              choices: [
+                "Voice call / shouting",
+                "Fixed time habit",
+                "Phone call / SMS",
+                "Neighbor word-of-mouth",
+                "Social media",
+                "Other"
+              ]
+            },
+            {
+              type: "checkbox",
+              name: "pain_points",
+              title: "Top problems today (pick up to 3)",
+              isRequired: true,
+              maxSelectedChoices: 3,
+              choices: [
+                "Low customer conversion",
+                "Unpredictable demand",
+                "No repeat customer tracking",
+                "Spoilage or waste",
+                "Payment collection issues",
+                "No easy billing",
+                "Bad weather disruption"
+              ]
+            }
+          ]
+        },
+        {
+          name: "features",
+          title: "What you want in this app",
+          elements: [
+            {
+              type: "ranking",
+              name: "feature_rank",
+              title: "Rank features by importance (drag top to bottom)",
+              isRequired: true,
+              choices: [
+                "Nearby customer alert",
+                "Built-in calculator",
+                "Product identifier",
+                "Digital bill for vendor and customer",
+                "Promotion broadcast",
+                "Simple daily sales summary"
+              ]
+            },
+            {
+              type: "comment",
+              name: "feature_missing",
+              title: "Any feature missing?"
+            }
+          ]
+        },
+        {
+          name: "closing",
+          title: "Pilot interest",
+          elements: [
+            {
+              type: "radiogroup",
+              name: "pilot_interest",
+              title: "Would you try this app for 2 weeks?",
+              isRequired: true,
+              choices: ["Yes", "Maybe", "No"]
+            },
+            {
+              type: "text",
+              name: "contact_phone",
+              title: "Phone number (optional)",
+              inputType: "tel"
+            },
+            {
+              type: "comment",
+              name: "vendor_notes",
+              title: "Any thoughts for us?"
+            }
+          ]
+        }
+      ]
+    };
+
+    /* ── i18n ──────────────────────────────────────────── */
+
+    const STRINGS = {
+      ne: {
+        pageTitle: "निर्मी विक्रेता सर्वेक्षण",
+        pageSubtitle: "कृपया यो छोटो फारम भर्नुहोस्। ३-४ मिनेट लाग्छ।",
+        labelSession: "सत्र", labelArea: "क्षेत्र", labelInterviewer: "अन्तर्वार्ताकार",
+        noEndpoint: "यो QR मा भण्डारण छैन। जवाफ यो फोनमा मात्र सुरक्षित हुन्छ।",
+        thankYou: "धन्यवाद",
+        resultOk: "तपाईंको जवाफ सफलतापूर्वक पेश गरियो।",
+        resultQueued: "यो फोनमा सुरक्षित। कृपया यो कोड अन्तर्वार्ताकारलाई देखाउनुहोस्।",
+        retryBtn: "पुन: अपलोड", copyBtn: "ब्याकअप कपी", newBtn: "नयाँ जवाफ",
+        backupNote: "अपलोड असफल भएमा, सिंक नहुँदासम्म स्थानीय ब्याकअप राखिन्छ।",
+        syncedMsg: (n) => `${n} पहिले लाइनमा रहेका जवाफ सिंक भयो।`,
+        pendingMsg: (n) => `${n} जवाफ अझै बाँकी। इन्टरनेट खुला राख्नुहोस्।`,
+        copiedMsg: "ब्याकअप कपी भयो।", noCopyMsg: "यो ब्राउजरमा कपी गर्न सकिएन।",
+        noBackupMsg: "अझै ब्याकअप डाटा छैन।", queueSynced: "लाइनमा रहेका जवाफ सिंक भयो।",
+        countdown: (n) => n === 1 ? "अन्तिम खण्ड!" : `${n} खण्ड बाँकी`,
+        encourage: [
+          "राम्रो सुरुवात!",
+          "राम्रो चलिरहेको छ!",
+          "अलि बढी — लगभग सकिँदैछ!",
+          "अझ अलि — तपाईं छिट्टै सक्नुहुन्छ!",
+          "अन्तिम चरणमा!"
+        ]
+      },
+      hi: {
+        pageTitle: "निर्मी विक्रेता सर्वेक्षण",
+        pageSubtitle: "कृपया यह छोटा फ़ॉर्म भरें। 3-4 मिनट लगेगा।",
+        labelSession: "सत्र", labelArea: "क्षेत्र", labelInterviewer: "साक्षात्कारकर्ता",
+        noEndpoint: "इस QR में स्टोरेज नहीं है। जवाब केवल इस फ़ोन पर सेव होंगे।",
+        thankYou: "धन्यवाद",
+        resultOk: "आपका जवाब सफलतापूर्वक जमा हो गया।",
+        resultQueued: "इस फ़ोन पर सेव किया गया। कृपया यह कोड साक्षात्कारकर्ता को दिखाएँ।",
+        retryBtn: "पुनः अपलोड", copyBtn: "बैकअप कॉपी", newBtn: "नया जवाब",
+        backupNote: "अपलोड विफल होने पर, सिंक होने तक स्थानीय बैकअप रखा जाएगा।",
+        syncedMsg: (n) => `${n} पहले की कतार में जवाब सिंक हो गए।`,
+        pendingMsg: (n) => `${n} जवाब अभी बाकी हैं। इंटरनेट चालू रखें।`,
+        copiedMsg: "बैकअप कॉपी हो गया।", noCopyMsg: "इस ब्राउज़र पर कॉपी नहीं हो सका।",
+        noBackupMsg: "अभी कोई बैकअप डेटा नहीं है।", queueSynced: "कतार में जवाब सिंक हो गए।",
+        countdown: (n) => n === 1 ? "आखिरी भाग!" : `${n} भाग बाकी`,
+        encourage: [
+          "अच्छी शुरुआत!",
+          "बहुत बढ़िया चल रहा है!",
+          "थोड़ा और — लगभग हो गया!",
+          "बस थोड़ा सा बाकी!",
+          "आखिरी चरण में!"
+        ]
+      },
+      en: {
+        pageTitle: "Nirmi Vendor Feedback", pageSubtitle: "Please answer this short form. It takes around 3 to 4 minutes.",
+        labelSession: "Session", labelArea: "Area", labelInterviewer: "Interviewer",
+        noEndpoint: "This QR has no storage endpoint. Answers are saved only on this phone until synced.",
+        thankYou: "Thank you",
+        resultOk: "Your response was submitted successfully.",
+        resultQueued: "Saved locally on this phone. Please show this code to interviewer for sync.",
+        retryBtn: "Retry queued upload", copyBtn: "Copy backup data", newBtn: "New response",
+        backupNote: "If upload fails, this page keeps a local backup on this phone until it syncs.",
+        syncedMsg: (n) => `Synced ${n} previously queued response(s).`,
+        pendingMsg: (n) => `${n} response(s) still pending. Keep internet on and retry later.`,
+        copiedMsg: "Backup data copied.", noCopyMsg: "Could not copy backup data on this browser.",
+        noBackupMsg: "No backup payload found yet.", queueSynced: "Queued responses synced successfully.",
+        countdown: (n) => n === 1 ? "Last section!" : `${n} sections left`,
+        encourage: [
+          "Great start!",
+          "You're doing great!",
+          "Halfway there — keep going!",
+          "Almost done!",
+          "Final stretch!"
+        ]
+      }
+    };
+
+    const SURVEY_I18N = {
+      ne: {
+        submit: "पेश गर्नुहोस्",
+        pages: { business: "तपाईंको दैनिक काम", economics: "आम्दानी र खर्च", relationship: "ग्राहक सम्बन्ध", features: "एपमा के चाहिन्छ", closing: "पाइलट रुचि" },
+        questions: {
+          vendor_type: "तपाईं मुख्यतया के बेच्नुहुन्छ?", shift_window: "मुख्य बिक्री पाली",
+          customers_band: "प्रति पाली ग्राहक (अनुमानित)", customers_exact: "प्रति पाली सही ग्राहक संख्या (ऐच्छिक)",
+          revenue_band: "प्रति पाली कुल आम्दानी (रु.)", revenue_exact: "प्रति पाली सही आम्दानी (ऐच्छिक)",
+          cost_band: "प्रति पाली कुल खर्च (रु.)", cost_exact: "प्रति पाली सही खर्च (ऐच्छिक)",
+          repeat_share: "कति ग्राहक दोहोर्याउने हुन्?",
+          discovery_mode: "ग्राहकलाई कसरी थाहा हुन्छ कि तपाईं नजिकै हुनुहुन्छ?",
+          pain_points: "आजका मुख्य समस्याहरू (३ सम्म छान्नुहोस्)",
+          feature_rank: "महत्त्वको क्रममा मिलाउनुहोस्", feature_missing: "कुनै सुविधा छुटेको छ?",
+          pilot_interest: "के तपाईं यो एप २ हप्ता प्रयोग गर्नुहुन्छ?",
+          contact_phone: "फोन नम्बर (ऐच्छिक)", vendor_notes: "हाम्रो लागि कुनै सुझाव?"
+        },
+        choices: {
+          vendor_type: [{ value: "Vegetables", text: "तरकारी" }, { value: "Fruits", text: "फलफूल" }, { value: "Snacks", text: "खाजा" }, { value: "Dairy", text: "दुग्ध" }, { value: "Mixed groceries", text: "मिश्रित किराना" }, { value: "Other", text: "अन्य" }],
+          shift_window: [{ value: "Morning", text: "बिहान" }, { value: "Afternoon", text: "दिउँसो" }, { value: "Evening", text: "साँझ" }, { value: "Mixed", text: "मिश्रित" }],
+          revenue_band: [{ value: "Below 2000", text: "रु. 2000 भन्दा कम" }, { value: "2000-4000", text: "रु. 2000-4000" }, { value: "4001-7000", text: "रु. 4001-7000" }, { value: "7001-10000", text: "रु. 7001-10000" }, { value: "10000+", text: "रु. 10000+" }],
+          cost_band: [{ value: "Below 1000", text: "रु. 1000 भन्दा कम" }, { value: "1000-2500", text: "रु. 1000-2500" }, { value: "2501-4000", text: "रु. 2501-4000" }, { value: "4001-6000", text: "रु. 4001-6000" }, { value: "6000+", text: "रु. 6000+" }],
+          repeat_share: [{ value: "Below 25%", text: "२५% भन्दा कम" }, { value: "25-50%", text: "२५-५०%" }, { value: "51-75%", text: "५१-७५%" }, { value: "More than 75%", text: "७५% भन्दा बढी" }],
+          discovery_mode: [{ value: "Voice call / shouting", text: "आवाज/कराउँदै" }, { value: "Fixed time habit", text: "निश्चित समय बानी" }, { value: "Phone call / SMS", text: "फोन/SMS" }, { value: "Neighbor word-of-mouth", text: "छिमेकीको भनाइ" }, { value: "Social media", text: "सोशल मिडिया" }, { value: "Other", text: "अन्य" }],
+          pain_points: [{ value: "Low customer conversion", text: "कम ग्राहक रूपान्तरण" }, { value: "Unpredictable demand", text: "अनिश्चित माग" }, { value: "No repeat customer tracking", text: "दोहोर्याउने ग्राहक ट्र्याकिङ छैन" }, { value: "Spoilage or waste", text: "बिग्रने/फोहोर" }, { value: "Payment collection issues", text: "भुक्तानी सङ्कलन समस्या" }, { value: "No easy billing", text: "सजिलो बिलिङ छैन" }, { value: "Bad weather disruption", text: "खराब मौसम" }],
+          feature_rank: [{ value: "Nearby customer alert", text: "नजिकको ग्राहक सूचना" }, { value: "Built-in calculator", text: "बिल्ट-इन क्याल्कुलेटर" }, { value: "Product identifier", text: "उत्पादन पहिचानकर्ता" }, { value: "Digital bill for vendor and customer", text: "डिजिटल बिल" }, { value: "Promotion broadcast", text: "प्रचार प्रसारण" }, { value: "Simple daily sales summary", text: "दैनिक बिक्री सारांश" }],
+          pilot_interest: [{ value: "Yes", text: "हुन्छ" }, { value: "Maybe", text: "सायद" }, { value: "No", text: "होइन" }]
+        }
+      },
+      hi: {
+        submit: "जमा करें",
+        pages: { business: "आपका दैनिक काम", economics: "आय और खर्च", relationship: "ग्राहक संबंध", features: "ऐप में क्या चाहिए", closing: "पायलट रुचि" },
+        questions: {
+          vendor_type: "आप मुख्य रूप से क्या बेचते हैं?", shift_window: "मुख्य बिक्री पाली",
+          customers_band: "प्रति पाली ग्राहक (अनुमानित)", customers_exact: "प्रति पाली सही ग्राहक संख्या (वैकल्पिक)",
+          revenue_band: "प्रति पाली कुल आय (NPR)", revenue_exact: "प्रति पाली सही आय (वैकल्पिक)",
+          cost_band: "प्रति पाली कुल खर्च (NPR)", cost_exact: "प्रति पाली सही खर्च (वैकल्पिक)",
+          repeat_share: "कितने ग्राहक दोबारा आते हैं?",
+          discovery_mode: "ग्राहकों को कैसे पता चलता है कि आप पास हैं?",
+          pain_points: "आज की मुख्य समस्याएँ (3 तक चुनें)",
+          feature_rank: "महत्व के क्रम में लगाएँ", feature_missing: "कोई सुविधा छूट गई?",
+          pilot_interest: "क्या आप यह ऐप 2 हफ़्ते इस्तेमाल करेंगे?",
+          contact_phone: "फ़ोन नंबर (वैकल्पिक)", vendor_notes: "हमारे लिए कोई सुझाव?"
+        },
+        choices: {
+          vendor_type: [{ value: "Vegetables", text: "सब्ज़ी" }, { value: "Fruits", text: "फल" }, { value: "Snacks", text: "नाश्ता" }, { value: "Dairy", text: "दूध/डेयरी" }, { value: "Mixed groceries", text: "मिश्रित किराना" }, { value: "Other", text: "अन्य" }],
+          shift_window: [{ value: "Morning", text: "सुबह" }, { value: "Afternoon", text: "दोपहर" }, { value: "Evening", text: "शाम" }, { value: "Mixed", text: "मिश्रित" }],
+          revenue_band: [{ value: "Below 2000", text: "₹2000 से कम" }, { value: "2000-4000", text: "₹2000-4000" }, { value: "4001-7000", text: "₹4001-7000" }, { value: "7001-10000", text: "₹7001-10000" }, { value: "10000+", text: "₹10000+" }],
+          cost_band: [{ value: "Below 1000", text: "₹1000 से कम" }, { value: "1000-2500", text: "₹1000-2500" }, { value: "2501-4000", text: "₹2501-4000" }, { value: "4001-6000", text: "₹4001-6000" }, { value: "6000+", text: "₹6000+" }],
+          repeat_share: [{ value: "Below 25%", text: "25% से कम" }, { value: "25-50%", text: "25-50%" }, { value: "51-75%", text: "51-75%" }, { value: "More than 75%", text: "75% से अधिक" }],
+          discovery_mode: [{ value: "Voice call / shouting", text: "आवाज़/पुकार" }, { value: "Fixed time habit", text: "निश्चित समय आदत" }, { value: "Phone call / SMS", text: "फ़ोन/SMS" }, { value: "Neighbor word-of-mouth", text: "पड़ोसियों का बताना" }, { value: "Social media", text: "सोशल मीडिया" }, { value: "Other", text: "अन्य" }],
+          pain_points: [{ value: "Low customer conversion", text: "कम ग्राहक रूपांतरण" }, { value: "Unpredictable demand", text: "अनिश्चित माँग" }, { value: "No repeat customer tracking", text: "दोबारा ग्राहक ट्रैकिंग नहीं" }, { value: "Spoilage or waste", text: "खराब होना/बर्बादी" }, { value: "Payment collection issues", text: "भुगतान वसूली समस्या" }, { value: "No easy billing", text: "आसान बिलिंग नहीं" }, { value: "Bad weather disruption", text: "खराब मौसम" }],
+          feature_rank: [{ value: "Nearby customer alert", text: "नज़दीकी ग्राहक सूचना" }, { value: "Built-in calculator", text: "बिल्ट-इन कैलकुलेटर" }, { value: "Product identifier", text: "उत्पाद पहचानकर्ता" }, { value: "Digital bill for vendor and customer", text: "डिजिटल बिल" }, { value: "Promotion broadcast", text: "प्रचार प्रसारण" }, { value: "Simple daily sales summary", text: "दैनिक बिक्री सारांश" }],
+          pilot_interest: [{ value: "Yes", text: "हाँ" }, { value: "Maybe", text: "शायद" }, { value: "No", text: "नहीं" }]
+        }
+      }
+    };
+
+    function detectLang(paramLang) {
+      if (paramLang && paramLang !== "auto") return paramLang;
+      const langs = navigator.languages || [navigator.language || "en"];
+      for (const l of langs) {
+        const code = l.split("-")[0].toLowerCase();
+        if (code === "ne" || code === "np") return "ne";
+        if (code === "hi") return "hi";
+      }
+      return "ne";
+    }
+
+    function localizeSurvey(json, lang) {
+      if (lang === "en" || !SURVEY_I18N[lang]) return json;
+      const t = SURVEY_I18N[lang];
+      const patched = JSON.parse(JSON.stringify(json));
+      if (t.submit) patched.completeText = t.submit;
+      for (const page of patched.pages) {
+        if (t.pages[page.name]) page.title = t.pages[page.name];
+        for (const el of page.elements || []) {
+          if (t.questions[el.name]) el.title = t.questions[el.name];
+          if (t.choices[el.name]) el.choices = t.choices[el.name];
+          if (t.htmls[el.name]) el.html = t.htmls[el.name];
+        }
+      }
+      return patched;
+    }
+
+    function applyChrome(lang) {
+      const s = STRINGS[lang] || STRINGS.en;
+      document.documentElement.lang = lang === "ne" ? "ne" : lang === "hi" ? "hi" : "en";
+      byId("pageTitle").textContent = s.pageTitle;
+      byId("pageSubtitle").textContent = s.pageSubtitle;
+      byId("labelSession").textContent = s.labelSession;
+      byId("labelArea").textContent = s.labelArea;
+      byId("labelInterviewer").textContent = s.labelInterviewer;
+      byId("thankYouTitle").textContent = s.thankYou;
+      byId("retryBtn").textContent = s.retryBtn;
+      byId("copyPayloadBtn").textContent = s.copyBtn;
+      byId("startOverBtn").textContent = s.newBtn;
+      byId("backupNote").textContent = s.backupNote;
+    }
+
+    /* ── end i18n ──────────────────────────────────────── */
+
+    function byId(id) {
+      return document.getElementById(id);
+    }
+
+    function updateProgress(survey, s) {
+      const total = survey.visiblePageCount;
+      const current = survey.currentPageNo;
+      const remaining = total - current;
+      const pct = Math.round(((current) / total) * 100);
+
+      const strip = byId("progressStrip");
+      strip.classList.remove("hidden");
+
+      const circumference = 2 * Math.PI * 18;
+      byId("progressFill").style.strokeDashoffset = circumference - (circumference * pct / 100);
+      byId("progressPct").textContent = pct + "%";
+      byId("countdownText").textContent = s.countdown(remaining);
+
+      const idx = Math.min(current, s.encourage.length - 1);
+      const el = byId("encourageText");
+      el.textContent = s.encourage[idx];
+      el.style.animation = "none";
+      el.offsetHeight;
+      el.style.animation = "";
+    }
+
+    function parseConfig() {
+      const params = new URLSearchParams(window.location.search);
+      const configFromQuery = {
+        sid: params.get("sid") || "session-not-set",
+        area: params.get("area") || "not-set",
+        interviewer: params.get("iv") || "not-set",
+        endpoint: params.get("ep") || "",
+        lang: params.get("lang") || "auto"
+      };
+
+      const cfg = params.get("cfg");
+      if (!cfg) {
+        return configFromQuery;
+      }
+
+      try {
+        const b64 = cfg.replace(/-/g, "+").replace(/_/g, "/");
+        const json = decodeURIComponent(escape(window.atob(b64)));
+        const parsed = JSON.parse(json);
+        return {
+          sid: parsed.sid || configFromQuery.sid,
+          area: parsed.area || configFromQuery.area,
+          interviewer: parsed.iv || configFromQuery.interviewer,
+          endpoint: parsed.ep || configFromQuery.endpoint,
+          lang: parsed.lang || configFromQuery.lang
+        };
+      } catch (error) {
+        console.error("Invalid cfg in URL", error);
+        return configFromQuery;
+      }
+    }
+
+    function asNumber(value, fallback) {
+      const n = Number(value);
+      return Number.isFinite(n) ? n : fallback;
+    }
+
+    function midpointFromBand(type, value) {
+      const table = BAND_MIDPOINTS[type] || {};
+      return table[value] || 0;
+    }
+
+    function computeEconomics(data) {
+      const customers = asNumber(data.customers_exact, midpointFromBand("customers_band", data.customers_band));
+      const revenue = asNumber(data.revenue_exact, midpointFromBand("revenue_band", data.revenue_band));
+      const cost = asNumber(data.cost_exact, midpointFromBand("cost_band", data.cost_band));
+      const net = revenue - cost;
+      const marginPct = revenue > 0 ? Math.round((net / revenue) * 100) : 0;
+      return { customers, revenue, cost, net, marginPct };
+    }
+
+    function queuePayload(payload) {
+      const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+      queue.push(payload);
+      localStorage.setItem(QUEUE_KEY, JSON.stringify(queue));
+      localStorage.setItem(LAST_PAYLOAD_KEY, JSON.stringify(payload));
+    }
+
+    async function submitPayload(payload, endpoint) {
+      if (!endpoint) {
+        queuePayload(payload);
+        return { ok: false, queued: true, reason: "no-endpoint" };
+      }
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+          queuePayload(payload);
+          return { ok: false, queued: true, reason: `http-${response.status}` };
+        }
+
+        localStorage.setItem(LAST_PAYLOAD_KEY, JSON.stringify(payload));
+        return { ok: true, queued: false };
+      } catch (error) {
+        queuePayload(payload);
+        return { ok: false, queued: true, reason: "network" };
+      }
+    }
+
+    async function flushQueue(endpoint) {
+      if (!endpoint) {
+        return { flushed: 0, pending: JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]").length };
+      }
+
+      const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
+      if (!queue.length) {
+        return { flushed: 0, pending: 0 };
+      }
+
+      const stillPending = [];
+      let flushed = 0;
+
+      for (const payload of queue) {
+        try {
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          if (response.ok) {
+            flushed += 1;
+          } else {
+            stillPending.push(payload);
+          }
+        } catch (error) {
+          stillPending.push(payload);
+        }
+      }
+
+      localStorage.setItem(QUEUE_KEY, JSON.stringify(stillPending));
+      return { flushed, pending: stillPending.length };
+    }
+
+    function showResult(message, code, queued) {
+      const card = byId("resultCard");
+      byId("resultMessage").textContent = message;
+      byId("submissionCode").textContent = `Submission ${code}`;
+      byId("retryBtn").classList.toggle("hidden", !queued);
+      card.classList.add("show");
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    }
+
+    function randomId() {
+      if (window.crypto && window.crypto.randomUUID) {
+        return window.crypto.randomUUID().slice(0, 8).toUpperCase();
+      }
+      return `R${Date.now().toString(36).toUpperCase()}`;
+    }
+
+    async function bootstrap() {
+      const config = parseConfig();
+      const lang = detectLang(config.lang);
+      config.lang = lang;
+      const s = STRINGS[lang] || STRINGS.en;
+
+      byId("metaSession").textContent = config.sid;
+      byId("metaArea").textContent = config.area;
+      byId("metaInterviewer").textContent = config.interviewer;
+      applyChrome(lang);
+
+      if (!config.endpoint) {
+        const n = byId("storageNotice");
+        n.classList.remove("hidden");
+        n.textContent = s.noEndpoint;
+      }
+
+      const queueStats = await flushQueue(config.endpoint);
+      if (queueStats.flushed > 0) {
+        const n = byId("storageNotice");
+        n.classList.remove("hidden");
+        n.classList.remove("warn");
+        n.classList.add("good");
+        n.textContent = s.syncedMsg(queueStats.flushed);
+      }
+
+      const surveyJson = localizeSurvey(SURVEY_JSON, lang);
+      const survey = new Survey.Model(surveyJson);
+      survey.render(byId("surveyContainer"));
+
+      updateProgress(survey, s);
+      survey.onCurrentPageChanged.add(() => updateProgress(survey, s));
+
+      survey.onComplete.add(async (sender) => {
+        byId("progressStrip").classList.add("hidden");
+        const submissionId = randomId();
+        const economics = computeEconomics(sender.data);
+        const payload = {
+          submissionId,
+          submittedAt: new Date().toISOString(),
+          context: {
+            sessionId: config.sid,
+            area: config.area,
+            interviewer: config.interviewer,
+            lang: config.lang,
+            userAgent: navigator.userAgent,
+            pageUrl: window.location.href
+          },
+          answers: sender.data,
+          computed: {
+            customersPerShift: economics.customers,
+            revenuePerShiftNpr: economics.revenue,
+            costPerShiftNpr: economics.cost,
+            netPerShiftNpr: economics.net,
+            marginPct: economics.marginPct
+          }
+        };
+
+        const result = await submitPayload(payload, config.endpoint);
+
+        if (result.ok) {
+          showResult(s.resultOk, submissionId, false);
+          return;
+        }
+
+        showResult(s.resultQueued, submissionId, true);
+      });
+
+      byId("retryBtn").addEventListener("click", async () => {
+        const stats = await flushQueue(config.endpoint);
+        if (stats.pending === 0) {
+          byId("retryBtn").classList.add("hidden");
+          byId("resultMessage").textContent = s.queueSynced;
+          return;
+        }
+        byId("resultMessage").textContent = s.pendingMsg(stats.pending);
+      });
+
+      byId("copyPayloadBtn").addEventListener("click", async () => {
+        const raw = localStorage.getItem(LAST_PAYLOAD_KEY);
+        if (!raw) {
+          byId("resultMessage").textContent = s.noBackupMsg;
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(raw);
+          byId("resultMessage").textContent = s.copiedMsg;
+        } catch (error) {
+          byId("resultMessage").textContent = s.noCopyMsg;
+        }
+      });
+
+      byId("startOverBtn").addEventListener("click", () => {
+        window.location.reload();
+      });
+    }
+
+    bootstrap();
+  </script>
+</body>
+</html>

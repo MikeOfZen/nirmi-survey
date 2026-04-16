@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nirmi QR Builder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1f2e2e;
+      --muted: #5f6f6f;
+      --line: #dce5e3;
+      --bg: #f3f7f6;
+      --card: #ffffff;
+      --brand: #0f7660;
+      --radius: 16px;
+      --shadow: 0 12px 28px rgba(2, 6, 23, 0.07);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Manrope", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    .wrap {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 14px 30px;
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 14px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+    }
+
+    h1, h2 { margin: 0 0 10px; }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .brand img {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      padding: 6px;
+      background: #fbfdfc;
+    }
+
+    .muted {
+      color: var(--muted);
+      margin: 0 0 10px;
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .field {
+      margin-bottom: 10px;
+    }
+
+    .field:last-child { margin-bottom: 0; }
+
+    label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    input, select, textarea, button {
+      font: inherit;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      border: 1px solid #ccd8d4;
+      border-radius: 10px;
+      padding: 9px 10px;
+      background: #fff;
+    }
+
+    textarea {
+      min-height: 86px;
+      resize: vertical;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #fff;
+      background: var(--brand);
+    }
+
+    .btn.secondary {
+      background: #eaf5f2;
+      color: #065f46;
+      border: 1px solid #b8ddd4;
+    }
+
+    .preview {
+      display: grid;
+      gap: 10px;
+      justify-items: center;
+      text-align: center;
+    }
+
+    #qrCanvas {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 8px;
+      background: #fff;
+    }
+
+    .small {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    @media (max-width: 860px) {
+      .wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <div class="brand">
+        <img src="./assets/logo.svg" alt="Nirmi logo">
+        <h1>Nirmi QR Builder</h1>
+      </div>
+      <p class="muted">Create one QR per field session. Setup is embedded into the QR link, so vendors only see a short survey form on their phone.</p>
+
+      <div class="row">
+        <div class="field">
+          <label for="sid">Session ID</label>
+          <input id="sid" value="SAT-2026-04-16-AM">
+        </div>
+        <div class="field">
+          <label for="area">Area</label>
+          <input id="area" value="Satungal">
+        </div>
+        <div class="field">
+          <label for="interviewer">Interviewer</label>
+          <input id="interviewer" value="Mike">
+        </div>
+        <div class="field">
+          <label for="lang">Language hint</label>
+          <select id="lang">
+            <option value="en">English</option>
+            <option value="np">Nepali hint</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="endpoint">Storage endpoint URL</label>
+        <input id="endpoint" placeholder="https://api.nirmi.shop/intake">
+      </div>
+
+      <div class="field">
+        <label for="baseUrl">Vendor survey base URL</label>
+        <input id="baseUrl" placeholder="https://MikeOfZen.github.io/nirmi-survey/">
+      </div>
+
+      <div class="btns">
+        <button id="buildBtn" class="btn" type="button">Build QR link</button>
+        <button id="copyLinkBtn" class="btn secondary" type="button">Copy link</button>
+      </div>
+
+      <div class="field" style="margin-top: 10px;">
+        <label for="finalUrl">Final QR URL</label>
+        <textarea id="finalUrl" readonly></textarea>
+      </div>
+    </section>
+
+    <section class="card preview">
+      <h2 style="margin-bottom: 0;">QR preview</h2>
+      <canvas id="qrCanvas" width="280" height="280"></canvas>
+      <p class="small">Print or show this QR. Vendor opens survey with session context already filled.</p>
+      <div class="btns" style="margin-top: 0;">
+        <button id="downloadQrBtn" class="btn" type="button">Download QR PNG</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+  <script>
+    const SAVE_KEY = "nirmi_qr_builder_state_v1";
+
+    function byId(id) {
+      return document.getElementById(id);
+    }
+
+    function encodeCfg(cfg) {
+      const json = JSON.stringify(cfg);
+      const b64 = btoa(unescape(encodeURIComponent(json)));
+      return b64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+    }
+
+    function inferBaseUrl() {
+      const here = new URL(window.location.href);
+      const path = here.pathname.replace(/qr-builder\.html$/, "");
+      return `${here.origin}${path}`;
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(SAVE_KEY);
+      if (!raw) {
+        byId("baseUrl").value = inferBaseUrl();
+        return;
+      }
+      try {
+        const s = JSON.parse(raw);
+        byId("sid").value = s.sid || byId("sid").value;
+        byId("area").value = s.area || byId("area").value;
+        byId("interviewer").value = s.interviewer || byId("interviewer").value;
+        byId("lang").value = s.lang || "en";
+        byId("endpoint").value = s.endpoint || "";
+        byId("baseUrl").value = s.baseUrl || inferBaseUrl();
+      } catch (error) {
+        byId("baseUrl").value = inferBaseUrl();
+      }
+    }
+
+    function saveState() {
+      const s = {
+        sid: byId("sid").value.trim(),
+        area: byId("area").value.trim(),
+        interviewer: byId("interviewer").value.trim(),
+        lang: byId("lang").value,
+        endpoint: byId("endpoint").value.trim(),
+        baseUrl: byId("baseUrl").value.trim()
+      };
+      localStorage.setItem(SAVE_KEY, JSON.stringify(s));
+    }
+
+    const qr = new QRious({
+      element: byId("qrCanvas"),
+      size: 280,
+      level: "M",
+      value: "https://example.com"
+    });
+
+    function buildLink() {
+      saveState();
+
+      const cfg = {
+        sid: byId("sid").value.trim() || "session-not-set",
+        area: byId("area").value.trim() || "not-set",
+        iv: byId("interviewer").value.trim() || "not-set",
+        ep: byId("endpoint").value.trim(),
+        lang: byId("lang").value
+      };
+
+      const encoded = encodeCfg(cfg);
+      const base = byId("baseUrl").value.trim() || inferBaseUrl();
+      const target = new URL("index.html", base).toString();
+      const final = `${target}?cfg=${encoded}`;
+
+      byId("finalUrl").value = final;
+      qr.value = final;
+    }
+
+    byId("buildBtn").addEventListener("click", buildLink);
+
+    byId("copyLinkBtn").addEventListener("click", async () => {
+      const url = byId("finalUrl").value.trim();
+      if (!url) {
+        buildLink();
+      }
+      try {
+        await navigator.clipboard.writeText(byId("finalUrl").value);
+        byId("copyLinkBtn").textContent = "Copied";
+        setTimeout(() => {
+          byId("copyLinkBtn").textContent = "Copy link";
+        }, 1000);
+      } catch (error) {
+        byId("copyLinkBtn").textContent = "Copy failed";
+      }
+    });
+
+    byId("downloadQrBtn").addEventListener("click", () => {
+      const dataUrl = byId("qrCanvas").toDataURL("image/png");
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = "nirmi-vendor-qr.png";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    });
+
+    loadState();
+    buildLink();
+  </script>
+</body>
+</html>
