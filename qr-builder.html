@@ -172,7 +172,7 @@
       <div class="row">
         <div class="field">
           <label for="sid">Session ID</label>
-          <input id="sid" value="SAT-2026-04-16-AM">
+          <input id="sid" placeholder="e.g. FIELD-2026-04-16">
         </div>
         <div class="field">
           <label for="area">Area</label>
@@ -185,21 +185,13 @@
         <div class="field">
           <label for="lang">Language hint</label>
           <select id="lang">
+            <option value="ne" selected>नेपाली (Nepali)</option>
+            <option value="hi">हिन्दी (Hindi)</option>
             <option value="en">English</option>
-            <option value="np">Nepali hint</option>
           </select>
         </div>
       </div>
 
-      <div class="field">
-        <label for="endpoint">Storage endpoint URL</label>
-        <input id="endpoint" placeholder="https://api.nirmi.shop/intake">
-      </div>
-
-      <div class="field">
-        <label for="baseUrl">Vendor survey base URL</label>
-        <input id="baseUrl" placeholder="https://MikeOfZen.github.io/nirmi-survey/">
-      </div>
 
       <div class="btns">
         <button id="buildBtn" class="btn" type="button">Build QR link</button>
@@ -242,22 +234,26 @@
       return `${here.origin}${path}`;
     }
 
+    function todaySessionId() {
+      const d = new Date();
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `FIELD-${yyyy}-${mm}-${dd}`;
+    }
+
     function loadState() {
+      byId("sid").value = todaySessionId();
       const raw = localStorage.getItem(SAVE_KEY);
-      if (!raw) {
-        byId("baseUrl").value = inferBaseUrl();
-        return;
-      }
+      if (!raw) return;
       try {
         const s = JSON.parse(raw);
-        byId("sid").value = s.sid || byId("sid").value;
+        byId("sid").value = s.sid || todaySessionId();
         byId("area").value = s.area || byId("area").value;
         byId("interviewer").value = s.interviewer || byId("interviewer").value;
-        byId("lang").value = s.lang || "en";
-        byId("endpoint").value = s.endpoint || "";
-        byId("baseUrl").value = s.baseUrl || inferBaseUrl();
+        byId("lang").value = s.lang || "ne";
       } catch (error) {
-        byId("baseUrl").value = inferBaseUrl();
+        /* ignore corrupt state */
       }
     }
 
@@ -266,9 +262,7 @@
         sid: byId("sid").value.trim(),
         area: byId("area").value.trim(),
         interviewer: byId("interviewer").value.trim(),
-        lang: byId("lang").value,
-        endpoint: byId("endpoint").value.trim(),
-        baseUrl: byId("baseUrl").value.trim()
+        lang: byId("lang").value
       };
       localStorage.setItem(SAVE_KEY, JSON.stringify(s));
     }
@@ -287,12 +281,11 @@
         sid: byId("sid").value.trim() || "session-not-set",
         area: byId("area").value.trim() || "not-set",
         iv: byId("interviewer").value.trim() || "not-set",
-        ep: byId("endpoint").value.trim(),
         lang: byId("lang").value
       };
 
       const encoded = encodeCfg(cfg);
-      const base = byId("baseUrl").value.trim() || inferBaseUrl();
+      const base = inferBaseUrl();
       const target = new URL("index.html", base).toString();
       const final = `${target}?cfg=${encoded}`;
 
@@ -322,7 +315,7 @@
       const dataUrl = byId("qrCanvas").toDataURL("image/png");
       const a = document.createElement("a");
       a.href = dataUrl;
-      a.download = "nirmi-vendor-qr.png";
+      a.download = `nirmi-qr-${byId("sid").value.trim() || "session"}.png`;
       document.body.appendChild(a);
       a.click();
       a.remove();

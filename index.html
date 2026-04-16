@@ -560,6 +560,12 @@
               inputType: "tel"
             },
             {
+              type: "text",
+              name: "contact_email",
+              title: "Email address (optional)",
+              inputType: "email"
+            },
+            {
               type: "comment",
               name: "vendor_notes",
               title: "Any thoughts for us?"
@@ -656,7 +662,7 @@
           pain_points: "आजका मुख्य समस्याहरू (३ सम्म छान्नुहोस्)",
           feature_rank: "महत्त्वको क्रममा मिलाउनुहोस्", feature_missing: "कुनै सुविधा छुटेको छ?",
           pilot_interest: "के तपाईं यो एप २ हप्ता प्रयोग गर्नुहुन्छ?",
-          contact_phone: "फोन नम्बर (ऐच्छिक)", vendor_notes: "हाम्रो लागि कुनै सुझाव?"
+          contact_phone: "फोन नम्बर (ऐच्छिक)", contact_email: "इमेल ठेगाना (ऐच्छिक)", vendor_notes: "हाम्रो लागि कुनै सुझाव?"
         },
         choices: {
           vendor_type: [{ value: "Vegetables", text: "तरकारी" }, { value: "Fruits", text: "फलफूल" }, { value: "Snacks", text: "खाजा" }, { value: "Dairy", text: "दुग्ध" }, { value: "Mixed groceries", text: "मिश्रित किराना" }, { value: "Other", text: "अन्य" }],
@@ -683,7 +689,7 @@
           pain_points: "आज की मुख्य समस्याएँ (3 तक चुनें)",
           feature_rank: "महत्व के क्रम में लगाएँ", feature_missing: "कोई सुविधा छूट गई?",
           pilot_interest: "क्या आप यह ऐप 2 हफ़्ते इस्तेमाल करेंगे?",
-          contact_phone: "फ़ोन नंबर (वैकल्पिक)", vendor_notes: "हमारे लिए कोई सुझाव?"
+          contact_phone: "फ़ोन नंबर (वैकल्पिक)", contact_email: "ईमेल पता (वैकल्पिक)", vendor_notes: "हमारे लिए कोई सुझाव?"
         },
         choices: {
           vendor_type: [{ value: "Vegetables", text: "सब्ज़ी" }, { value: "Fruits", text: "फल" }, { value: "Snacks", text: "नाश्ता" }, { value: "Dairy", text: "दूध/डेयरी" }, { value: "Mixed groceries", text: "मिश्रित किराना" }, { value: "Other", text: "अन्य" }],
@@ -700,7 +706,13 @@
     };
 
     function detectLang(paramLang) {
-      if (paramLang && paramLang !== "auto") return paramLang;
+      if (paramLang && paramLang !== "auto") {
+        const code = paramLang.split("-")[0].toLowerCase();
+        if (code === "ne" || code === "np") return "ne";
+        if (code === "hi") return "hi";
+        if (code === "en") return "en";
+        return code;
+      }
       const langs = navigator.languages || [navigator.language || "en"];
       for (const l of langs) {
         const code = l.split("-")[0].toLowerCase();
