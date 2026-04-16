@@ -720,7 +720,6 @@
         for (const el of page.elements || []) {
           if (t.questions[el.name]) el.title = t.questions[el.name];
           if (t.choices[el.name]) el.choices = t.choices[el.name];
-          if (t.htmls[el.name]) el.html = t.htmls[el.name];
         }
       }
       return patched;
