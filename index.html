@@ -3,42 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nirmi Vendor Survey</title>
+  <title>Nirmi — Vendor Research</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
   <link href="https://unpkg.com/survey-core@1.12.23/defaultV2.min.css" type="text/css" rel="stylesheet">
   <style>
     :root {
-      --ink: #1f2e2e;
-      --muted: #647070;
-      --line: #dde5e4;
-      --bg: #f6f8f8;
+      --ink: #2c3e50;
+      --muted: #6b7a7a;
+      --line: #ede3de;
+      --bg: #fff9f0;
       --card: #ffffff;
-      --brand: #0f7660;
+      --brand: #ff8369;
+      --brand-dark: #e06a52;
+      --accent: #ffcc00;
       --warn: #b45309;
       --good: #166534;
       --radius: 16px;
-      --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+      --shadow: 0 12px 30px rgba(44, 62, 80, 0.07);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: "Manrope", sans-serif;
+      font-family: "Nunito", sans-serif;
       color: var(--ink);
-      background: radial-gradient(circle at 15% 0%, #eaf7f2 0, #f6f8f8 35%);
+      background: radial-gradient(circle at 15% 0%, #fff0e8 0, var(--bg) 35%);
       min-height: 100vh;
     }
 
-    .wrap {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 16px 14px 26px;
-    }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 12px 14px 26px; }
 
     .card {
       background: var(--card);
@@ -46,11 +42,44 @@
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 16px;
+      transition: box-shadow 0.3s ease;
     }
+
+    .card:hover { box-shadow: 0 16px 40px rgba(44, 62, 80, 0.1); }
+
+    /* ── Language bar ── */
+
+    .lang-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .lang-bar label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .lang-bar select {
+      font-family: inherit;
+      font-size: 0.84rem;
+      font-weight: 600;
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    /* ── Brand header ── */
 
     .brand {
       display: grid;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
       justify-items: center;
       text-align: center;
@@ -58,111 +87,88 @@
     }
 
     .brand-logo {
-      width: 86px;
-      height: 86px;
+      width: 80px;
+      height: 80px;
       border-radius: 20px;
-      background: #f7faf8;
+      background: var(--bg);
       border: 1px solid var(--line);
       padding: 10px;
     }
 
     .brand h1 {
       margin: 0;
-      font-size: clamp(1.15rem, 4vw, 1.6rem);
+      font-size: clamp(1.15rem, 4vw, 1.55rem);
+      font-weight: 800;
       letter-spacing: -0.01em;
+      color: var(--ink);
     }
 
-    .brand p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.96rem;
-      line-height: 1.45;
+    .brand p { margin: 0; color: var(--muted); font-size: 0.94rem; line-height: 1.45; }
+
+    .intro-badge {
+      font-size: 0.86rem;
+      line-height: 1.5;
+      color: var(--brand-dark);
+      background: #fff0e8;
+      border: 1px solid #ffd4c0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
     }
 
     .meta-row {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 8px;
-      margin: 12px 0 0;
+      width: 100%;
     }
 
     .meta-item {
       border: 1px solid var(--line);
       border-radius: 10px;
-      background: #fbfcfc;
+      background: #fffbf7;
       padding: 8px;
       text-align: left;
     }
 
-    .meta-item .k {
-      font-size: 0.73rem;
-      color: var(--muted);
-      margin-bottom: 2px;
-    }
-
-    .meta-item .v {
-      font-size: 0.9rem;
-      font-weight: 700;
-      word-break: break-word;
-    }
+    .meta-item .k { font-size: 0.73rem; color: var(--muted); margin-bottom: 2px; }
+    .meta-item .v { font-size: 0.88rem; font-weight: 700; word-break: break-word; }
 
     .banner {
-      margin-top: 12px;
+      margin-top: 10px;
       border-radius: 12px;
       padding: 10px 12px;
-      font-size: 0.87rem;
+      font-size: 0.86rem;
       line-height: 1.45;
+      width: 100%;
     }
 
-    .banner.warn {
-      background: #fff7ed;
-      border: 1px solid #fed7aa;
-      color: var(--warn);
-    }
+    .banner.warn { background: #fff7ed; border: 1px solid #fed7aa; color: var(--warn); }
+    .banner.good { background: #ecfdf3; border: 1px solid #bbf7d0; color: var(--good); }
 
-    .banner.good {
-      background: #ecfdf3;
-      border: 1px solid #bbf7d0;
-      color: var(--good);
-    }
+    /* ── Survey card ── */
 
-    #surveyCard {
-      margin-top: 12px;
-      overflow: hidden;
-    }
+    #surveyCard { margin-top: 12px; overflow: hidden; }
+    #surveyContainer { min-height: 340px; }
 
-    #surveyContainer {
-      min-height: 340px;
-    }
+    /* ── Result card ── */
 
-    .result {
-      margin-top: 12px;
-      display: none;
-      gap: 10px;
-    }
-
-    .result.show {
-      display: grid;
-    }
+    .result { margin-top: 12px; display: none; gap: 10px; }
+    .result.show { display: grid; animation: popIn 0.4s ease-out; }
 
     .code-pill {
       display: inline-flex;
       align-items: center;
       padding: 6px 10px;
       border-radius: 999px;
-      background: #eff6ff;
-      color: #1e3a8a;
+      background: #fff5ee;
+      color: var(--brand-dark);
       font-weight: 700;
       font-size: 0.82rem;
       width: fit-content;
     }
 
-    .actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 4px;
-    }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
 
     .btn {
       border: 1px solid var(--line);
@@ -171,8 +177,12 @@
       background: #fff;
       color: var(--ink);
       font-weight: 700;
+      font-family: inherit;
       cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
+
+    .btn:active { transform: scale(0.97); }
 
     .btn.primary {
       background: var(--brand);
@@ -180,47 +190,29 @@
       color: #fff;
     }
 
-    .mini {
-      font-size: 0.84rem;
-      color: var(--muted);
-      margin: 0;
-    }
+    .btn.primary:hover { box-shadow: 0 4px 14px rgba(255, 131, 105, 0.35); }
 
-    .hidden {
-      display: none !important;
-    }
+    .mini { font-size: 0.84rem; color: var(--muted); margin: 0; }
 
-    /* ── Progress & Encouragement ── */
+    .hidden { display: none !important; }
+
+    /* ── Progress ring ── */
 
     .progress-strip {
       display: flex;
       align-items: center;
       gap: 10px;
-      margin-top: 14px;
+      margin-top: 12px;
       padding: 10px 14px;
       border-radius: 12px;
-      background: linear-gradient(135deg, #eaf7f2 0%, #f0f5ff 100%);
+      background: linear-gradient(135deg, #fff0e8 0%, #fffbf0 100%);
       border: 1px solid var(--line);
+      width: 100%;
     }
 
-    .progress-ring {
-      position: relative;
-      width: 42px;
-      height: 42px;
-      flex-shrink: 0;
-    }
-
-    .progress-ring svg {
-      transform: rotate(-90deg);
-      width: 42px;
-      height: 42px;
-    }
-
-    .progress-ring .track {
-      fill: none;
-      stroke: var(--line);
-      stroke-width: 4;
-    }
+    .progress-ring { position: relative; width: 42px; height: 42px; flex-shrink: 0; }
+    .progress-ring svg { transform: rotate(-90deg); width: 42px; height: 42px; }
+    .progress-ring .track { fill: none; stroke: var(--line); stroke-width: 4; }
 
     .progress-ring .fill {
       fill: none;
@@ -243,18 +235,8 @@
       color: var(--brand);
     }
 
-    .progress-text {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
-    }
-
-    .progress-text .countdown {
-      font-size: 0.88rem;
-      font-weight: 700;
-      color: var(--ink);
-    }
+    .progress-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .progress-text .countdown { font-size: 0.88rem; font-weight: 700; color: var(--ink); }
 
     .progress-text .encourage {
       font-size: 0.82rem;
@@ -274,48 +256,28 @@
       100% { transform: scale(1); opacity: 1; }
     }
 
-    .result.show {
-      display: grid;
-      animation: popIn 0.4s ease-out;
-    }
-
-    .card {
-      transition: box-shadow 0.3s ease;
-    }
-
-    .card:hover {
-      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.1);
-    }
-
-    .btn {
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-    }
-
-    .btn:active {
-      transform: scale(0.97);
-    }
-
-    .btn.primary:hover {
-      box-shadow: 0 4px 14px rgba(15, 118, 96, 0.3);
-    }
-
     @media (max-width: 620px) {
-      .meta-row {
-        grid-template-columns: 1fr;
-      }
-
-      .card {
-        padding: 14px;
-      }
+      .meta-row { grid-template-columns: 1fr; }
+      .card { padding: 14px; }
     }
   </style>
 </head>
 <body>
   <main class="wrap">
+    <div class="lang-bar">
+      <label for="langSelect" id="langLabel">Language</label>
+      <select id="langSelect">
+        <option value="ne">नेपाली</option>
+        <option value="hi">हिन्दी</option>
+        <option value="en">English</option>
+      </select>
+    </div>
+
     <section class="card brand">
       <img class="brand-logo" src="./assets/logo.svg" alt="Nirmi logo">
-      <h1 id="pageTitle">Nirmi Vendor Feedback</h1>
-      <p id="pageSubtitle">Please answer this short form. It takes around 3 to 4 minutes.</p>
+      <h1 id="pageTitle">Nirmi — Vendor Research</h1>
+      <p id="pageSubtitle">Please answer this short form. It takes about 5–6 minutes.</p>
+      <p id="introText" class="intro-badge">This is market research for the Nirmi app. Your answers help us build the app around your real needs.</p>
       <div class="meta-row">
         <div class="meta-item">
           <div class="k" id="labelSession">Session</div>
@@ -348,47 +310,33 @@
     </section>
 
     <section id="resultCard" class="card result" aria-live="polite">
-      <h2 id="thankYouTitle" style="margin: 0; font-size: 1.1rem;">Thank you</h2>
+      <h2 id="thankYouTitle" style="margin: 0; font-size: 1.1rem;">Thank you!</h2>
       <p id="resultMessage" class="mini"></p>
       <span id="submissionCode" class="code-pill"></span>
       <div class="actions">
-        <button type="button" id="retryBtn" class="btn hidden">Retry queued upload</button>
-        <button type="button" id="copyPayloadBtn" class="btn">Copy backup data</button>
+        <button type="button" id="retryBtn" class="btn hidden">Retry</button>
+        <button type="button" id="copyPayloadBtn" class="btn">Copy backup</button>
         <button type="button" id="startOverBtn" class="btn primary">New response</button>
       </div>
-      <p id="backupNote" class="mini">If upload fails, this page keeps a local backup on this phone until it syncs.</p>
+      <p id="backupNote" class="mini">If upload fails, this page keeps a local backup until it syncs.</p>
     </section>
   </main>
 
   <script src="https://unpkg.com/survey-core@1.12.23/survey.core.min.js"></script>
   <script src="https://unpkg.com/survey-js-ui@1.12.23/survey-js-ui.min.js"></script>
   <script>
-    const QUEUE_KEY = "nirmi_vendor_submission_queue_v1";
-    const LAST_PAYLOAD_KEY = "nirmi_vendor_last_payload_v1";
+    const QUEUE_KEY = "nirmi_vendor_submission_queue_v2";
+    const LAST_PAYLOAD_KEY = "nirmi_vendor_last_payload_v2";
 
     const BAND_MIDPOINTS = {
-      customers_band: {
-        "1-20": 10,
-        "21-40": 30,
-        "41-70": 55,
-        "71-100": 85,
-        "100+": 120
-      },
-      revenue_band: {
-        "Below 2000": 1500,
-        "2000-4000": 3000,
-        "4001-7000": 5500,
-        "7001-10000": 8500,
-        "10000+": 12000
-      },
-      cost_band: {
-        "Below 1000": 700,
-        "1000-2500": 1800,
-        "2501-4000": 3200,
-        "4001-6000": 5000,
-        "6000+": 7000
-      }
+      customers_band: { "1-20": 10, "21-40": 30, "41-70": 55, "71-100": 85, "100+": 120 },
+      revenue_band: { "Below 2000": 1500, "2000-4000": 3000, "4001-7000": 5500, "7001-10000": 8500, "10000+": 12000 },
+      cost_band: { "Below 1000": 700, "1000-2500": 1800, "2501-4000": 3200, "4001-6000": 5000, "6000+": 7000 }
     };
+
+    /* ══════════════════════════════════════════════════════
+       SURVEY DEFINITION — 6 pages with conditional logic
+       ══════════════════════════════════════════════════════ */
 
     const SURVEY_JSON = {
       showProgressBar: "top",
@@ -399,311 +347,319 @@
       pages: [
         {
           name: "business",
-          title: "Your daily work",
+          title: "Your business",
           elements: [
-            {
-              type: "dropdown",
-              name: "vendor_type",
-              title: "What do you mostly sell?",
-              isRequired: true,
-              choices: [
-                "Vegetables",
-                "Fruits",
-                "Snacks",
-                "Dairy",
-                "Mixed groceries",
-                "Other"
-              ]
-            },
-            {
-              type: "radiogroup",
-              name: "shift_window",
-              title: "Main selling shift",
-              isRequired: true,
-              choices: [
-                "Morning",
-                "Afternoon",
-                "Evening",
-                "Mixed"
-              ]
-            },
-            {
-              type: "radiogroup",
-              name: "customers_band",
-              title: "Customers per shift (approx)",
-              isRequired: true,
-              choices: ["1-20", "21-40", "41-70", "71-100", "100+"]
-            },
-            {
-              type: "text",
-              name: "customers_exact",
-              title: "Exact customers per shift (optional)",
-              inputType: "number"
-            }
+            { type: "dropdown", name: "vendor_type", title: "What do you mainly sell?", isRequired: true,
+              choices: ["Vegetables", "Fruits", "Snacks", "Dairy", "Mixed groceries", "Cooked food", "Other"] },
+            { type: "radiogroup", name: "selling_mode", title: "How do you sell?", isRequired: true,
+              choices: ["Mobile cart", "Stationary spot", "Permanent shop"] },
+            { type: "text", name: "travel_hours", title: "Hours per day traveling / selling on the move",
+              inputType: "number", visibleIf: "{selling_mode} = 'Mobile cart'", isRequired: true },
+            { type: "radiogroup", name: "travel_km", title: "Distance covered per day (approx)",
+              visibleIf: "{selling_mode} = 'Mobile cart'", isRequired: true,
+              choices: ["Less than 2 km", "2-5 km", "5-10 km", "More than 10 km"] },
+            { type: "radiogroup", name: "stops_per_day", title: "Number of selling stops per day",
+              visibleIf: "{selling_mode} = 'Mobile cart'", isRequired: true,
+              choices: ["1-3", "4-6", "7-10", "10+"] },
+            { type: "text", name: "spot_hours", title: "Hours per day at your selling spot",
+              inputType: "number", visibleIf: "{selling_mode} = 'Stationary spot'", isRequired: true },
+            { type: "radiogroup", name: "location_type", title: "Type of selling spot",
+              visibleIf: "{selling_mode} = 'Stationary spot'", isRequired: true,
+              choices: ["Sidewalk / footpath", "Market area", "Intersection / chowk", "Temple / shrine area", "Other"] },
+            { type: "radiogroup", name: "shop_type", title: "Type of shop",
+              visibleIf: "{selling_mode} = 'Permanent shop'", isRequired: true,
+              choices: ["Rented space", "Own building", "Market stall", "Other"] },
+            { type: "radiogroup", name: "shift_window", title: "Main selling time", isRequired: true,
+              choices: ["Morning", "Afternoon", "Evening", "All day"] }
           ]
         },
         {
-          name: "economics",
-          title: "Income and cost",
+          name: "income",
+          title: "Customers and income",
           elements: [
-            {
-              type: "radiogroup",
-              name: "revenue_band",
-              title: "Total revenue per shift (NPR)",
-              isRequired: true,
-              choices: ["Below 2000", "2000-4000", "4001-7000", "7001-10000", "10000+"]
-            },
-            {
-              type: "text",
-              name: "revenue_exact",
-              title: "Exact revenue per shift (optional)",
-              inputType: "number"
-            },
-            {
-              type: "radiogroup",
-              name: "cost_band",
-              title: "Total daily cost per shift (NPR)",
-              isRequired: true,
-              choices: ["Below 1000", "1000-2500", "2501-4000", "4001-6000", "6000+"]
-            },
-            {
-              type: "text",
-              name: "cost_exact",
-              title: "Exact cost per shift (optional)",
-              inputType: "number"
-            }
+            { type: "radiogroup", name: "customers_band", title: "Customers per shift (approx)", isRequired: true,
+              choices: ["1-20", "21-40", "41-70", "71-100", "100+"] },
+            { type: "text", name: "customers_exact", title: "Exact customers per shift (optional)", inputType: "number" },
+            { type: "radiogroup", name: "revenue_band", title: "Total revenue per shift (NPR)", isRequired: true,
+              choices: ["Below 2000", "2000-4000", "4001-7000", "7001-10000", "10000+"] },
+            { type: "text", name: "revenue_exact", title: "Exact revenue per shift (optional)", inputType: "number" },
+            { type: "radiogroup", name: "cost_band", title: "Total daily cost per shift (NPR)", isRequired: true,
+              choices: ["Below 1000", "1000-2500", "2501-4000", "4001-6000", "6000+"] },
+            { type: "text", name: "cost_exact", title: "Exact cost per shift (optional)", inputType: "number" }
           ]
         },
         {
           name: "relationship",
-          title: "Customer relationship",
+          title: "Customers and credit",
           elements: [
-            {
-              type: "radiogroup",
-              name: "repeat_share",
-              title: "How many customers are repeat buyers?",
-              isRequired: true,
-              choices: ["Below 25%", "25-50%", "51-75%", "More than 75%"]
-            },
-            {
-              type: "radiogroup",
-              name: "discovery_mode",
-              title: "How do customers usually know you are nearby?",
-              isRequired: true,
-              choices: [
-                "Voice call / shouting",
-                "Fixed time habit",
-                "Phone call / SMS",
-                "Neighbor word-of-mouth",
-                "Social media",
-                "Other"
-              ]
-            },
-            {
-              type: "checkbox",
-              name: "pain_points",
-              title: "Top problems today (pick up to 3)",
-              isRequired: true,
-              maxSelectedChoices: 3,
-              choices: [
-                "Low customer conversion",
-                "Unpredictable demand",
-                "No repeat customer tracking",
-                "Spoilage or waste",
-                "Payment collection issues",
-                "No easy billing",
-                "Bad weather disruption"
-              ]
-            }
+            { type: "radiogroup", name: "repeat_share", title: "How many customers are repeat buyers?", isRequired: true,
+              choices: ["Below 25%", "25-50%", "51-75%", "More than 75%"] },
+            { type: "radiogroup", name: "discovery_mode", title: "How do customers usually find you?", isRequired: true,
+              choices: ["Voice call / shouting", "Fixed time habit", "Phone call / SMS", "Neighbor word-of-mouth", "Social media", "Other"] },
+            { type: "radiogroup", name: "offers_credit", title: "Do you give credit (khata / udhaaro) to regular customers?", isRequired: true,
+              choices: ["Yes regularly", "Sometimes", "No"] },
+            { type: "radiogroup", name: "credit_customers", title: "How many customers have running credit?",
+              visibleIf: "{offers_credit} = 'Yes regularly' or {offers_credit} = 'Sometimes'", isRequired: true,
+              choices: ["1-5", "6-15", "16-30", "More than 30"] },
+            { type: "radiogroup", name: "credit_tracking", title: "How do you track credit / debts?",
+              visibleIf: "{offers_credit} = 'Yes regularly' or {offers_credit} = 'Sometimes'", isRequired: true,
+              choices: ["Paper notebook", "Memory only", "Phone notes", "Other"] },
+            { type: "radiogroup", name: "credit_problems", title: "Biggest problem with credit / debts?",
+              visibleIf: "{offers_credit} = 'Yes regularly' or {offers_credit} = 'Sometimes'", isRequired: true,
+              choices: ["Customers forget to pay", "Hard to keep track", "Leads to disputes", "No major problem"] }
           ]
         },
         {
           name: "features",
-          title: "What you want in this app",
+          title: "Problems and features",
           elements: [
-            {
-              type: "ranking",
-              name: "feature_rank",
-              title: "Rank features by importance (drag top to bottom)",
-              isRequired: true,
-              choices: [
-                "Nearby customer alert",
-                "Built-in calculator",
-                "Product identifier",
-                "Digital bill for vendor and customer",
-                "Promotion broadcast",
-                "Simple daily sales summary"
-              ]
-            },
-            {
-              type: "comment",
-              name: "feature_missing",
-              title: "Any feature missing?"
-            }
+            { type: "checkbox", name: "pain_points", title: "Top problems today (pick up to 3)", isRequired: true, maxSelectedChoices: 3,
+              choices: ["Low customer reach", "Unpredictable demand", "No repeat customer tracking", "Spoilage or waste",
+                        "Payment collection issues", "No easy billing", "Credit / debt tracking", "Bad weather disruption"] },
+            { type: "ranking", name: "feature_rank", title: "Rank features by importance (drag top to bottom)", isRequired: true,
+              choices: ["Nearby customer alert", "Built-in calculator", "Product identifier", "Digital bill",
+                        "Credit / debt book (khata)", "Promotion broadcast", "Daily sales summary"] },
+            { type: "comment", name: "feature_missing", title: "Any feature or tool you wish you had?" }
           ]
         },
         {
-          name: "closing",
-          title: "Pilot interest",
+          name: "pricing",
+          title: "Pilot and pricing",
           elements: [
-            {
-              type: "radiogroup",
-              name: "pilot_interest",
-              title: "Would you try this app for 2 weeks?",
-              isRequired: true,
-              choices: ["Yes", "Maybe", "No"]
-            },
-            {
-              type: "text",
-              name: "contact_phone",
-              title: "Phone number (optional)",
-              inputType: "tel"
-            },
-            {
-              type: "text",
-              name: "contact_email",
-              title: "Email address (optional)",
-              inputType: "email"
-            },
-            {
-              type: "comment",
-              name: "vendor_notes",
-              title: "Any thoughts for us?"
-            }
+            { type: "radiogroup", name: "pilot_interest", title: "Would you try this app free for 2 weeks?", isRequired: true,
+              choices: ["Yes", "Maybe", "No"] },
+            { type: "radiogroup", name: "promo_push_interest",
+              title: "Would you pay a small fee to send a time-limited promotional alert to nearby customers?",
+              description: "Example: 'Fresh vegetables available!' sent to phones within 500 m of your location for 1 hour.",
+              isRequired: true, choices: ["Yes definitely", "Maybe if affordable", "No"] },
+            { type: "radiogroup", name: "promo_push_budget", title: "How much would you pay per month for promotional pushes?",
+              visibleIf: "{promo_push_interest} = 'Yes definitely' or {promo_push_interest} = 'Maybe if affordable'",
+              isRequired: true, choices: ["NPR 100-200", "NPR 200-500", "NPR 500-1000", "NPR 1000+"] }
+          ]
+        },
+        {
+          name: "contact",
+          title: "Contact and suggestions",
+          elements: [
+            { type: "text", name: "contact_phone", title: "Phone number (optional)", inputType: "tel" },
+            { type: "text", name: "contact_email", title: "Email address (optional)", inputType: "email" },
+            { type: "comment", name: "suggestions", title: "Any requests, suggestions, or ideas for us?",
+              description: "Tell us anything — what would make your daily work easier?" }
           ]
         }
       ]
     };
 
-    /* ── i18n ──────────────────────────────────────────── */
+    /* ══════════════════════════════════════════════════════
+       i18n — Chrome strings (page shell)
+       ══════════════════════════════════════════════════════ */
 
     const STRINGS = {
       ne: {
-        pageTitle: "निर्मी विक्रेता सर्वेक्षण",
-        pageSubtitle: "कृपया यो छोटो फारम भर्नुहोस्। ३-४ मिनेट लाग्छ।",
+        pageTitle: "निर्मी — विक्रेता अनुसन्धान",
+        pageSubtitle: "कृपया यो छोटो फारम भर्नुहोस्। ५–६ मिनेट लाग्छ।",
+        introText: "यो निर्मी एपको लागि बजार अनुसन्धान हो। तपाईंको जवाफले हाम्रो एपलाई तपाईंको वास्तविक आवश्यकताअनुसार बनाउन मद्दत गर्छ।",
+        langLabel: "भाषा",
         labelSession: "सत्र", labelArea: "क्षेत्र", labelInterviewer: "अन्तर्वार्ताकार",
-        noEndpoint: "यो QR मा भण्डारण छैन। जवाफ यो फोनमा मात्र सुरक्षित हुन्छ।",
-        thankYou: "धन्यवाद",
+        noEndpoint: "जवाफ यो फोनमा सुरक्षित हुन्छ। अन्तर्वार्ताकारलाई कोड देखाउनुहोस्।",
+        thankYou: "धन्यवाद!",
         resultOk: "तपाईंको जवाफ सफलतापूर्वक पेश गरियो।",
         resultQueued: "यो फोनमा सुरक्षित। कृपया यो कोड अन्तर्वार्ताकारलाई देखाउनुहोस्।",
         retryBtn: "पुन: अपलोड", copyBtn: "ब्याकअप कपी", newBtn: "नयाँ जवाफ",
         backupNote: "अपलोड असफल भएमा, सिंक नहुँदासम्म स्थानीय ब्याकअप राखिन्छ।",
-        syncedMsg: (n) => `${n} पहिले लाइनमा रहेका जवाफ सिंक भयो।`,
+        syncedMsg: (n) => `${n} पहिलेका जवाफ सिंक भयो।`,
         pendingMsg: (n) => `${n} जवाफ अझै बाँकी। इन्टरनेट खुला राख्नुहोस्।`,
         copiedMsg: "ब्याकअप कपी भयो।", noCopyMsg: "यो ब्राउजरमा कपी गर्न सकिएन।",
         noBackupMsg: "अझै ब्याकअप डाटा छैन।", queueSynced: "लाइनमा रहेका जवाफ सिंक भयो।",
         countdown: (n) => n === 1 ? "अन्तिम खण्ड!" : `${n} खण्ड बाँकी`,
-        encourage: [
-          "राम्रो सुरुवात!",
-          "राम्रो चलिरहेको छ!",
-          "अलि बढी — लगभग सकिँदैछ!",
-          "अझ अलि — तपाईं छिट्टै सक्नुहुन्छ!",
-          "अन्तिम चरणमा!"
-        ]
+        encourage: ["राम्रो सुरुवात!", "राम्रो चलिरहेको छ!", "बिचमा पुग्नुभयो!", "अलि बढी — लगभग सकिँदैछ!", "अझ अलि — छिट्टै सक्नुहुन्छ!", "अन्तिम चरणमा!"]
       },
       hi: {
-        pageTitle: "निर्मी विक्रेता सर्वेक्षण",
-        pageSubtitle: "कृपया यह छोटा फ़ॉर्म भरें। 3-4 मिनट लगेगा।",
+        pageTitle: "निर्मी — विक्रेता अनुसंधान",
+        pageSubtitle: "कृपया यह छोटा फ़ॉर्म भरें। 5–6 मिनट लगेगा।",
+        introText: "यह निर्मी ऐप के लिए बाज़ार अनुसंधान है। आपके जवाब से हमें ऐप को आपकी ज़रूरतों के अनुसार बनाने में मदद मिलेगी।",
+        langLabel: "भाषा",
         labelSession: "सत्र", labelArea: "क्षेत्र", labelInterviewer: "साक्षात्कारकर्ता",
-        noEndpoint: "इस QR में स्टोरेज नहीं है। जवाब केवल इस फ़ोन पर सेव होंगे।",
-        thankYou: "धन्यवाद",
+        noEndpoint: "जवाब इस फ़ोन पर सेव होंगे। साक्षात्कारकर्ता को कोड दिखाएँ।",
+        thankYou: "धन्यवाद!",
         resultOk: "आपका जवाब सफलतापूर्वक जमा हो गया।",
-        resultQueued: "इस फ़ोन पर सेव किया गया। कृपया यह कोड साक्षात्कारकर्ता को दिखाएँ।",
+        resultQueued: "इस फ़ोन पर सेव। कृपया यह कोड साक्षात्कारकर्ता को दिखाएँ।",
         retryBtn: "पुनः अपलोड", copyBtn: "बैकअप कॉपी", newBtn: "नया जवाब",
         backupNote: "अपलोड विफल होने पर, सिंक होने तक स्थानीय बैकअप रखा जाएगा।",
-        syncedMsg: (n) => `${n} पहले की कतार में जवाब सिंक हो गए।`,
+        syncedMsg: (n) => `${n} पहले के जवाब सिंक हो गए।`,
         pendingMsg: (n) => `${n} जवाब अभी बाकी हैं। इंटरनेट चालू रखें।`,
         copiedMsg: "बैकअप कॉपी हो गया।", noCopyMsg: "इस ब्राउज़र पर कॉपी नहीं हो सका।",
-        noBackupMsg: "अभी कोई बैकअप डेटा नहीं है।", queueSynced: "कतार में जवाब सिंक हो गए।",
+        noBackupMsg: "अभी कोई बैकअप डेटा नहीं।", queueSynced: "कतार के जवाब सिंक हो गए।",
         countdown: (n) => n === 1 ? "आखिरी भाग!" : `${n} भाग बाकी`,
-        encourage: [
-          "अच्छी शुरुआत!",
-          "बहुत बढ़िया चल रहा है!",
-          "थोड़ा और — लगभग हो गया!",
-          "बस थोड़ा सा बाकी!",
-          "आखिरी चरण में!"
-        ]
+        encourage: ["अच्छी शुरुआत!", "बहुत बढ़िया!", "बीच में पहुँच गए!", "थोड़ा और — लगभग हो गया!", "बस थोड़ा सा बाकी!", "आखिरी चरण!"]
       },
       en: {
-        pageTitle: "Nirmi Vendor Feedback", pageSubtitle: "Please answer this short form. It takes around 3 to 4 minutes.",
+        pageTitle: "Nirmi — Vendor Research",
+        pageSubtitle: "Please answer this short form. It takes about 5–6 minutes.",
+        introText: "This is market research for the Nirmi app. Your answers help us build the app around your real needs.",
+        langLabel: "Language",
         labelSession: "Session", labelArea: "Area", labelInterviewer: "Interviewer",
-        noEndpoint: "This QR has no storage endpoint. Answers are saved only on this phone until synced.",
-        thankYou: "Thank you",
+        noEndpoint: "Answers will be saved on this phone. Show the code to the interviewer.",
+        thankYou: "Thank you!",
         resultOk: "Your response was submitted successfully.",
-        resultQueued: "Saved locally on this phone. Please show this code to interviewer for sync.",
-        retryBtn: "Retry queued upload", copyBtn: "Copy backup data", newBtn: "New response",
-        backupNote: "If upload fails, this page keeps a local backup on this phone until it syncs.",
+        resultQueued: "Saved locally on this phone. Please show this code to the interviewer.",
+        retryBtn: "Retry upload", copyBtn: "Copy backup", newBtn: "New response",
+        backupNote: "If upload fails, this page keeps a local backup until it syncs.",
         syncedMsg: (n) => `Synced ${n} previously queued response(s).`,
-        pendingMsg: (n) => `${n} response(s) still pending. Keep internet on and retry later.`,
-        copiedMsg: "Backup data copied.", noCopyMsg: "Could not copy backup data on this browser.",
-        noBackupMsg: "No backup payload found yet.", queueSynced: "Queued responses synced successfully.",
+        pendingMsg: (n) => `${n} response(s) still pending. Keep internet on.`,
+        copiedMsg: "Backup copied.", noCopyMsg: "Could not copy on this browser.",
+        noBackupMsg: "No backup data yet.", queueSynced: "Queued responses synced.",
         countdown: (n) => n === 1 ? "Last section!" : `${n} sections left`,
-        encourage: [
-          "Great start!",
-          "You're doing great!",
-          "Halfway there — keep going!",
-          "Almost done!",
-          "Final stretch!"
-        ]
+        encourage: ["Great start!", "You're doing great!", "Halfway there!", "Almost done — keep going!", "Just a bit more!", "Final stretch!"]
       }
     };
+
+    /* ══════════════════════════════════════════════════════
+       i18n — Survey content (ne / hi)
+       ══════════════════════════════════════════════════════ */
 
     const SURVEY_I18N = {
       ne: {
         submit: "पेश गर्नुहोस्",
-        pages: { business: "तपाईंको दैनिक काम", economics: "आम्दानी र खर्च", relationship: "ग्राहक सम्बन्ध", features: "एपमा के चाहिन्छ", closing: "पाइलट रुचि" },
+        pages: {
+          business: "तपाईंको व्यापार", income: "ग्राहक र आम्दानी",
+          relationship: "ग्राहक सम्बन्ध र उधारो", features: "समस्या र सुविधाहरू",
+          pricing: "पाइलट र मूल्य", contact: "सम्पर्क र सुझाव"
+        },
         questions: {
-          vendor_type: "तपाईं मुख्यतया के बेच्नुहुन्छ?", shift_window: "मुख्य बिक्री पाली",
-          customers_band: "प्रति पाली ग्राहक (अनुमानित)", customers_exact: "प्रति पाली सही ग्राहक संख्या (ऐच्छिक)",
-          revenue_band: "प्रति पाली कुल आम्दानी (रु.)", revenue_exact: "प्रति पाली सही आम्दानी (ऐच्छिक)",
-          cost_band: "प्रति पाली कुल खर्च (रु.)", cost_exact: "प्रति पाली सही खर्च (ऐच्छिक)",
+          vendor_type: "तपाईं मुख्यतया के बेच्नुहुन्छ?",
+          selling_mode: "तपाईं कसरी बेच्नुहुन्छ?",
+          travel_hours: "दिनमा कति घण्टा हिँडेर बेच्नुहुन्छ?",
+          travel_km: "दिनमा लगभग कति दूरी?",
+          stops_per_day: "दिनमा कति ठाउँमा रोकिनुहुन्छ?",
+          spot_hours: "दिनमा कति घण्टा बिक्री ठाउँमा बस्नुहुन्छ?",
+          location_type: "बिक्री ठाउँको प्रकार",
+          shop_type: "पसलको प्रकार",
+          shift_window: "मुख्य बिक्री समय",
+          customers_band: "प्रति पाली ग्राहक (अनुमानित)",
+          customers_exact: "प्रति पाली सही ग्राहक संख्या (ऐच्छिक)",
+          revenue_band: "प्रति पाली कुल आम्दानी (रु.)",
+          revenue_exact: "प्रति पाली सही आम्दानी (ऐच्छिक)",
+          cost_band: "प्रति पाली कुल खर्च (रु.)",
+          cost_exact: "प्रति पाली सही खर्च (ऐच्छिक)",
           repeat_share: "कति ग्राहक दोहोर्याउने हुन्?",
-          discovery_mode: "ग्राहकलाई कसरी थाहा हुन्छ कि तपाईं नजिकै हुनुहुन्छ?",
+          discovery_mode: "ग्राहकले तपाईंलाई कसरी भेट्टाउँछन्?",
+          offers_credit: "के तपाईं नियमित ग्राहकलाई उधारो (खाता) दिनुहुन्छ?",
+          credit_customers: "कति ग्राहकको उधारो चलिरहेको छ?",
+          credit_tracking: "उधारो कसरी ट्र्याक गर्नुहुन्छ?",
+          credit_problems: "उधारोको सबभन्दा ठूलो समस्या?",
           pain_points: "आजका मुख्य समस्याहरू (३ सम्म छान्नुहोस्)",
-          feature_rank: "महत्त्वको क्रममा मिलाउनुहोस्", feature_missing: "कुनै सुविधा छुटेको छ?",
-          pilot_interest: "के तपाईं यो एप २ हप्ता प्रयोग गर्नुहुन्छ?",
-          contact_phone: "फोन नम्बर (ऐच्छिक)", contact_email: "इमेल ठेगाना (ऐच्छिक)", vendor_notes: "हाम्रो लागि कुनै सुझाव?"
+          feature_rank: "महत्त्वको क्रममा मिलाउनुहोस्",
+          feature_missing: "कुनै सुविधा वा उपकरण चाहनुहुन्छ?",
+          pilot_interest: "के तपाईं यो एप २ हप्ता निःशुल्क प्रयोग गर्नुहुन्छ?",
+          promo_push_interest: "के तपाईं नजिकका ग्राहकलाई समय-सीमित प्रचार पठाउन शुल्क तिर्नुहुन्छ?",
+          promo_push_budget: "प्रचार पुशको लागि मासिक कति तिर्नुहुन्छ?",
+          contact_phone: "फोन नम्बर (ऐच्छिक)",
+          contact_email: "इमेल ठेगाना (ऐच्छिक)",
+          suggestions: "कुनै अनुरोध, सुझाव वा विचार?"
+        },
+        descriptions: {
+          promo_push_interest: "उदाहरण: 'ताजा तरकारी यहाँ!' — तपाईंको स्थानबाट ५०० मिटरभित्रका फोनमा १ घण्टाको लागि।",
+          suggestions: "हामीलाई जे पनि भन्नुहोस् — के ले तपाईंको दैनिक काम सजिलो बनाउँछ?"
         },
         choices: {
-          vendor_type: [{ value: "Vegetables", text: "तरकारी" }, { value: "Fruits", text: "फलफूल" }, { value: "Snacks", text: "खाजा" }, { value: "Dairy", text: "दुग्ध" }, { value: "Mixed groceries", text: "मिश्रित किराना" }, { value: "Other", text: "अन्य" }],
-          shift_window: [{ value: "Morning", text: "बिहान" }, { value: "Afternoon", text: "दिउँसो" }, { value: "Evening", text: "साँझ" }, { value: "Mixed", text: "मिश्रित" }],
-          revenue_band: [{ value: "Below 2000", text: "रु. 2000 भन्दा कम" }, { value: "2000-4000", text: "रु. 2000-4000" }, { value: "4001-7000", text: "रु. 4001-7000" }, { value: "7001-10000", text: "रु. 7001-10000" }, { value: "10000+", text: "रु. 10000+" }],
-          cost_band: [{ value: "Below 1000", text: "रु. 1000 भन्दा कम" }, { value: "1000-2500", text: "रु. 1000-2500" }, { value: "2501-4000", text: "रु. 2501-4000" }, { value: "4001-6000", text: "रु. 4001-6000" }, { value: "6000+", text: "रु. 6000+" }],
-          repeat_share: [{ value: "Below 25%", text: "२५% भन्दा कम" }, { value: "25-50%", text: "२५-५०%" }, { value: "51-75%", text: "५१-७५%" }, { value: "More than 75%", text: "७५% भन्दा बढी" }],
-          discovery_mode: [{ value: "Voice call / shouting", text: "आवाज/कराउँदै" }, { value: "Fixed time habit", text: "निश्चित समय बानी" }, { value: "Phone call / SMS", text: "फोन/SMS" }, { value: "Neighbor word-of-mouth", text: "छिमेकीको भनाइ" }, { value: "Social media", text: "सोशल मिडिया" }, { value: "Other", text: "अन्य" }],
-          pain_points: [{ value: "Low customer conversion", text: "कम ग्राहक रूपान्तरण" }, { value: "Unpredictable demand", text: "अनिश्चित माग" }, { value: "No repeat customer tracking", text: "दोहोर्याउने ग्राहक ट्र्याकिङ छैन" }, { value: "Spoilage or waste", text: "बिग्रने/फोहोर" }, { value: "Payment collection issues", text: "भुक्तानी सङ्कलन समस्या" }, { value: "No easy billing", text: "सजिलो बिलिङ छैन" }, { value: "Bad weather disruption", text: "खराब मौसम" }],
-          feature_rank: [{ value: "Nearby customer alert", text: "नजिकको ग्राहक सूचना" }, { value: "Built-in calculator", text: "बिल्ट-इन क्याल्कुलेटर" }, { value: "Product identifier", text: "उत्पादन पहिचानकर्ता" }, { value: "Digital bill for vendor and customer", text: "डिजिटल बिल" }, { value: "Promotion broadcast", text: "प्रचार प्रसारण" }, { value: "Simple daily sales summary", text: "दैनिक बिक्री सारांश" }],
-          pilot_interest: [{ value: "Yes", text: "हुन्छ" }, { value: "Maybe", text: "सायद" }, { value: "No", text: "होइन" }]
+          vendor_type: [{value:"Vegetables",text:"तरकारी"},{value:"Fruits",text:"फलफूल"},{value:"Snacks",text:"खाजा"},{value:"Dairy",text:"दुग्ध"},{value:"Mixed groceries",text:"मिश्रित किराना"},{value:"Cooked food",text:"पकाएको खाना"},{value:"Other",text:"अन्य"}],
+          selling_mode: [{value:"Mobile cart",text:"हिँडेर बेच्ने (ठेला/गाडा)"},{value:"Stationary spot",text:"एकै ठाउँमा बस्ने"},{value:"Permanent shop",text:"पक्की पसल"}],
+          travel_km: [{value:"Less than 2 km",text:"२ किमी भन्दा कम"},{value:"2-5 km",text:"२–५ किमी"},{value:"5-10 km",text:"५–१० किमी"},{value:"More than 10 km",text:"१०+ किमी"}],
+          stops_per_day: [{value:"1-3",text:"१–३"},{value:"4-6",text:"४–६"},{value:"7-10",text:"७–१०"},{value:"10+",text:"१०+"}],
+          location_type: [{value:"Sidewalk / footpath",text:"सडकछेउ / फुटपाथ"},{value:"Market area",text:"बजार क्षेत्र"},{value:"Intersection / chowk",text:"चोक / क्रसिङ"},{value:"Temple / shrine area",text:"मन्दिर / देवालय क्षेत्र"},{value:"Other",text:"अन्य"}],
+          shop_type: [{value:"Rented space",text:"भाडाको ठाउँ"},{value:"Own building",text:"आफ्नै भवन"},{value:"Market stall",text:"बजारको स्टल"},{value:"Other",text:"अन्य"}],
+          shift_window: [{value:"Morning",text:"बिहान"},{value:"Afternoon",text:"दिउँसो"},{value:"Evening",text:"साँझ"},{value:"All day",text:"दिनभर"}],
+          customers_band: [{value:"1-20",text:"१–२०"},{value:"21-40",text:"२१–४०"},{value:"41-70",text:"४१–७०"},{value:"71-100",text:"७१–१००"},{value:"100+",text:"१००+"}],
+          revenue_band: [{value:"Below 2000",text:"रु. २००० भन्दा कम"},{value:"2000-4000",text:"रु. २०००–४०००"},{value:"4001-7000",text:"रु. ४००१–७०००"},{value:"7001-10000",text:"रु. ७००१–१००००"},{value:"10000+",text:"रु. १००००+"}],
+          cost_band: [{value:"Below 1000",text:"रु. १००० भन्दा कम"},{value:"1000-2500",text:"रु. १०००–२५००"},{value:"2501-4000",text:"रु. २५०१–४०००"},{value:"4001-6000",text:"रु. ४००१–६०००"},{value:"6000+",text:"रु. ६०००+"}],
+          repeat_share: [{value:"Below 25%",text:"२५% भन्दा कम"},{value:"25-50%",text:"२५–५०%"},{value:"51-75%",text:"५१–७५%"},{value:"More than 75%",text:"७५% भन्दा बढी"}],
+          discovery_mode: [{value:"Voice call / shouting",text:"आवाज/कराउँदै"},{value:"Fixed time habit",text:"निश्चित समय बानी"},{value:"Phone call / SMS",text:"फोन/SMS"},{value:"Neighbor word-of-mouth",text:"छिमेकीको भनाइ"},{value:"Social media",text:"सोशल मिडिया"},{value:"Other",text:"अन्य"}],
+          offers_credit: [{value:"Yes regularly",text:"नियमित रूपमा दिन्छु"},{value:"Sometimes",text:"कहिलेकाहीं"},{value:"No",text:"दिन्न"}],
+          credit_customers: [{value:"1-5",text:"१–५"},{value:"6-15",text:"६–१५"},{value:"16-30",text:"१६–३०"},{value:"More than 30",text:"३०+"}],
+          credit_tracking: [{value:"Paper notebook",text:"कागजको कापी/खाता"},{value:"Memory only",text:"सम्झनामा मात्र"},{value:"Phone notes",text:"फोनमा नोट"},{value:"Other",text:"अन्य"}],
+          credit_problems: [{value:"Customers forget to pay",text:"ग्राहकले बिर्सन्छन्"},{value:"Hard to keep track",text:"ट्र्याक गर्न गाह्रो"},{value:"Leads to disputes",text:"विवाद हुन्छ"},{value:"No major problem",text:"ठूलो समस्या छैन"}],
+          pain_points: [{value:"Low customer reach",text:"कम ग्राहक पहुँच"},{value:"Unpredictable demand",text:"अनिश्चित माग"},{value:"No repeat customer tracking",text:"दोहोर्याउने ग्राहक ट्र्याकिङ छैन"},{value:"Spoilage or waste",text:"बिग्रने/फोहोर"},{value:"Payment collection issues",text:"भुक्तानी सङ्कलन समस्या"},{value:"No easy billing",text:"सजिलो बिलिङ छैन"},{value:"Credit / debt tracking",text:"उधारो/खाता ट्र्याकिङ"},{value:"Bad weather disruption",text:"खराब मौसम"}],
+          feature_rank: [{value:"Nearby customer alert",text:"नजिकको ग्राहक सूचना"},{value:"Built-in calculator",text:"बिल्ट-इन क्याल्कुलेटर"},{value:"Product identifier",text:"उत्पादन पहिचानकर्ता"},{value:"Digital bill",text:"डिजिटल बिल"},{value:"Credit / debt book (khata)",text:"उधारो/खाता किताब (खाता)"},{value:"Promotion broadcast",text:"प्रचार प्रसारण"},{value:"Daily sales summary",text:"दैनिक बिक्री सारांश"}],
+          pilot_interest: [{value:"Yes",text:"हुन्छ"},{value:"Maybe",text:"सायद"},{value:"No",text:"होइन"}],
+          promo_push_interest: [{value:"Yes definitely",text:"अवश्य"},{value:"Maybe if affordable",text:"सस्तो भए सायद"},{value:"No",text:"होइन"}],
+          promo_push_budget: [{value:"NPR 100-200",text:"रु. १००–२००"},{value:"NPR 200-500",text:"रु. २००–५००"},{value:"NPR 500-1000",text:"रु. ५००–१०००"},{value:"NPR 1000+",text:"रु. १०००+"}]
         }
       },
       hi: {
         submit: "जमा करें",
-        pages: { business: "आपका दैनिक काम", economics: "आय और खर्च", relationship: "ग्राहक संबंध", features: "ऐप में क्या चाहिए", closing: "पायलट रुचि" },
+        pages: {
+          business: "आपका व्यापार", income: "ग्राहक और आय",
+          relationship: "ग्राहक संबंध और उधार", features: "समस्याएँ और सुविधाएँ",
+          pricing: "पायलट और मूल्य", contact: "संपर्क और सुझाव"
+        },
         questions: {
-          vendor_type: "आप मुख्य रूप से क्या बेचते हैं?", shift_window: "मुख्य बिक्री पाली",
-          customers_band: "प्रति पाली ग्राहक (अनुमानित)", customers_exact: "प्रति पाली सही ग्राहक संख्या (वैकल्पिक)",
-          revenue_band: "प्रति पाली कुल आय (NPR)", revenue_exact: "प्रति पाली सही आय (वैकल्पिक)",
-          cost_band: "प्रति पाली कुल खर्च (NPR)", cost_exact: "प्रति पाली सही खर्च (वैकल्पिक)",
+          vendor_type: "आप मुख्य रूप से क्या बेचते हैं?",
+          selling_mode: "आप कैसे बेचते हैं?",
+          travel_hours: "दिन में कितने घंटे घूमकर बेचते हैं?",
+          travel_km: "दिन में लगभग कितनी दूरी?",
+          stops_per_day: "दिन में कितनी जगह रुकते हैं?",
+          spot_hours: "दिन में कितने घंटे बिक्री स्थान पर बैठते हैं?",
+          location_type: "बिक्री स्थान का प्रकार",
+          shop_type: "दुकान का प्रकार",
+          shift_window: "मुख्य बिक्री समय",
+          customers_band: "प्रति पाली ग्राहक (अनुमानित)",
+          customers_exact: "प्रति पाली सही ग्राहक संख्या (वैकल्पिक)",
+          revenue_band: "प्रति पाली कुल आय (NPR)",
+          revenue_exact: "प्रति पाली सही आय (वैकल्पिक)",
+          cost_band: "प्रति पाली कुल खर्च (NPR)",
+          cost_exact: "प्रति पाली सही खर्च (वैकल्पिक)",
           repeat_share: "कितने ग्राहक दोबारा आते हैं?",
-          discovery_mode: "ग्राहकों को कैसे पता चलता है कि आप पास हैं?",
+          discovery_mode: "ग्राहकों को आप कैसे मिलते हैं?",
+          offers_credit: "क्या आप नियमित ग्राहकों को उधार (खाता) देते हैं?",
+          credit_customers: "कितने ग्राहकों का उधार चल रहा है?",
+          credit_tracking: "उधार कैसे ट्रैक करते हैं?",
+          credit_problems: "उधार की सबसे बड़ी समस्या?",
           pain_points: "आज की मुख्य समस्याएँ (3 तक चुनें)",
-          feature_rank: "महत्व के क्रम में लगाएँ", feature_missing: "कोई सुविधा छूट गई?",
-          pilot_interest: "क्या आप यह ऐप 2 हफ़्ते इस्तेमाल करेंगे?",
-          contact_phone: "फ़ोन नंबर (वैकल्पिक)", contact_email: "ईमेल पता (वैकल्पिक)", vendor_notes: "हमारे लिए कोई सुझाव?"
+          feature_rank: "महत्व के क्रम में लगाएँ",
+          feature_missing: "कोई सुविधा या उपकरण जो आप चाहते हैं?",
+          pilot_interest: "क्या आप यह ऐप 2 हफ़्ते मुफ़्त इस्तेमाल करेंगे?",
+          promo_push_interest: "क्या आप पास के ग्राहकों को समय-सीमित प्रचार भेजने के लिए शुल्क देंगे?",
+          promo_push_budget: "प्रचार पुश के लिए मासिक कितना देंगे?",
+          contact_phone: "फ़ोन नंबर (वैकल्पिक)",
+          contact_email: "ईमेल पता (वैकल्पिक)",
+          suggestions: "कोई अनुरोध, सुझाव या विचार?"
+        },
+        descriptions: {
+          promo_push_interest: "उदाहरण: 'ताज़ी सब्ज़ी यहाँ!' — आपकी जगह से 500 मीटर के अंदर फ़ोन पर 1 घंटे के लिए।",
+          suggestions: "हमें कुछ भी बताएँ — क्या आपके दैनिक काम को आसान बनाएगा?"
         },
         choices: {
-          vendor_type: [{ value: "Vegetables", text: "सब्ज़ी" }, { value: "Fruits", text: "फल" }, { value: "Snacks", text: "नाश्ता" }, { value: "Dairy", text: "दूध/डेयरी" }, { value: "Mixed groceries", text: "मिश्रित किराना" }, { value: "Other", text: "अन्य" }],
-          shift_window: [{ value: "Morning", text: "सुबह" }, { value: "Afternoon", text: "दोपहर" }, { value: "Evening", text: "शाम" }, { value: "Mixed", text: "मिश्रित" }],
-          revenue_band: [{ value: "Below 2000", text: "₹2000 से कम" }, { value: "2000-4000", text: "₹2000-4000" }, { value: "4001-7000", text: "₹4001-7000" }, { value: "7001-10000", text: "₹7001-10000" }, { value: "10000+", text: "₹10000+" }],
-          cost_band: [{ value: "Below 1000", text: "₹1000 से कम" }, { value: "1000-2500", text: "₹1000-2500" }, { value: "2501-4000", text: "₹2501-4000" }, { value: "4001-6000", text: "₹4001-6000" }, { value: "6000+", text: "₹6000+" }],
-          repeat_share: [{ value: "Below 25%", text: "25% से कम" }, { value: "25-50%", text: "25-50%" }, { value: "51-75%", text: "51-75%" }, { value: "More than 75%", text: "75% से अधिक" }],
-          discovery_mode: [{ value: "Voice call / shouting", text: "आवाज़/पुकार" }, { value: "Fixed time habit", text: "निश्चित समय आदत" }, { value: "Phone call / SMS", text: "फ़ोन/SMS" }, { value: "Neighbor word-of-mouth", text: "पड़ोसियों का बताना" }, { value: "Social media", text: "सोशल मीडिया" }, { value: "Other", text: "अन्य" }],
-          pain_points: [{ value: "Low customer conversion", text: "कम ग्राहक रूपांतरण" }, { value: "Unpredictable demand", text: "अनिश्चित माँग" }, { value: "No repeat customer tracking", text: "दोबारा ग्राहक ट्रैकिंग नहीं" }, { value: "Spoilage or waste", text: "खराब होना/बर्बादी" }, { value: "Payment collection issues", text: "भुगतान वसूली समस्या" }, { value: "No easy billing", text: "आसान बिलिंग नहीं" }, { value: "Bad weather disruption", text: "खराब मौसम" }],
-          feature_rank: [{ value: "Nearby customer alert", text: "नज़दीकी ग्राहक सूचना" }, { value: "Built-in calculator", text: "बिल्ट-इन कैलकुलेटर" }, { value: "Product identifier", text: "उत्पाद पहचानकर्ता" }, { value: "Digital bill for vendor and customer", text: "डिजिटल बिल" }, { value: "Promotion broadcast", text: "प्रचार प्रसारण" }, { value: "Simple daily sales summary", text: "दैनिक बिक्री सारांश" }],
-          pilot_interest: [{ value: "Yes", text: "हाँ" }, { value: "Maybe", text: "शायद" }, { value: "No", text: "नहीं" }]
+          vendor_type: [{value:"Vegetables",text:"सब्ज़ी"},{value:"Fruits",text:"फल"},{value:"Snacks",text:"नाश्ता"},{value:"Dairy",text:"दूध/डेयरी"},{value:"Mixed groceries",text:"मिश्रित किराना"},{value:"Cooked food",text:"पका हुआ खाना"},{value:"Other",text:"अन्य"}],
+          selling_mode: [{value:"Mobile cart",text:"घूमकर बेचना (ठेला/गाड़ी)"},{value:"Stationary spot",text:"एक जगह बैठकर"},{value:"Permanent shop",text:"पक्की दुकान"}],
+          travel_km: [{value:"Less than 2 km",text:"2 किमी से कम"},{value:"2-5 km",text:"2–5 किमी"},{value:"5-10 km",text:"5–10 किमी"},{value:"More than 10 km",text:"10+ किमी"}],
+          stops_per_day: [{value:"1-3",text:"1–3"},{value:"4-6",text:"4–6"},{value:"7-10",text:"7–10"},{value:"10+",text:"10+"}],
+          location_type: [{value:"Sidewalk / footpath",text:"सड़क किनारे / फुटपाथ"},{value:"Market area",text:"बाज़ार क्षेत्र"},{value:"Intersection / chowk",text:"चौक / क्रॉसिंग"},{value:"Temple / shrine area",text:"मंदिर / देवालय क्षेत्र"},{value:"Other",text:"अन्य"}],
+          shop_type: [{value:"Rented space",text:"किराये की जगह"},{value:"Own building",text:"अपनी इमारत"},{value:"Market stall",text:"बाज़ार का स्टॉल"},{value:"Other",text:"अन्य"}],
+          shift_window: [{value:"Morning",text:"सुबह"},{value:"Afternoon",text:"दोपहर"},{value:"Evening",text:"शाम"},{value:"All day",text:"पूरा दिन"}],
+          customers_band: [{value:"1-20",text:"1–20"},{value:"21-40",text:"21–40"},{value:"41-70",text:"41–70"},{value:"71-100",text:"71–100"},{value:"100+",text:"100+"}],
+          revenue_band: [{value:"Below 2000",text:"₹2000 से कम"},{value:"2000-4000",text:"₹2000–4000"},{value:"4001-7000",text:"₹4001–7000"},{value:"7001-10000",text:"₹7001–10000"},{value:"10000+",text:"₹10000+"}],
+          cost_band: [{value:"Below 1000",text:"₹1000 से कम"},{value:"1000-2500",text:"₹1000–2500"},{value:"2501-4000",text:"₹2501–4000"},{value:"4001-6000",text:"₹4001–6000"},{value:"6000+",text:"₹6000+"}],
+          repeat_share: [{value:"Below 25%",text:"25% से कम"},{value:"25-50%",text:"25–50%"},{value:"51-75%",text:"51–75%"},{value:"More than 75%",text:"75% से अधिक"}],
+          discovery_mode: [{value:"Voice call / shouting",text:"आवाज़/पुकार"},{value:"Fixed time habit",text:"निश्चित समय आदत"},{value:"Phone call / SMS",text:"फ़ोन/SMS"},{value:"Neighbor word-of-mouth",text:"पड़ोसियों का बताना"},{value:"Social media",text:"सोशल मीडिया"},{value:"Other",text:"अन्य"}],
+          offers_credit: [{value:"Yes regularly",text:"नियमित रूप से देता/देती हूँ"},{value:"Sometimes",text:"कभी-कभी"},{value:"No",text:"नहीं देता/देती"}],
+          credit_customers: [{value:"1-5",text:"1–5"},{value:"6-15",text:"6–15"},{value:"16-30",text:"16–30"},{value:"More than 30",text:"30+"}],
+          credit_tracking: [{value:"Paper notebook",text:"कागज़ की कॉपी/खाता"},{value:"Memory only",text:"याद में"},{value:"Phone notes",text:"फ़ोन पर नोट"},{value:"Other",text:"अन्य"}],
+          credit_problems: [{value:"Customers forget to pay",text:"ग्राहक भूल जाते हैं"},{value:"Hard to keep track",text:"ट्रैक करना मुश्किल"},{value:"Leads to disputes",text:"विवाद होते हैं"},{value:"No major problem",text:"कोई बड़ी समस्या नहीं"}],
+          pain_points: [{value:"Low customer reach",text:"कम ग्राहक पहुँच"},{value:"Unpredictable demand",text:"अनिश्चित माँग"},{value:"No repeat customer tracking",text:"दोबारा ग्राहक ट्रैकिंग नहीं"},{value:"Spoilage or waste",text:"खराब होना/बर्बादी"},{value:"Payment collection issues",text:"भुगतान वसूली समस्या"},{value:"No easy billing",text:"आसान बिलिंग नहीं"},{value:"Credit / debt tracking",text:"उधार/खाता ट्रैकिंग"},{value:"Bad weather disruption",text:"खराब मौसम"}],
+          feature_rank: [{value:"Nearby customer alert",text:"नज़दीकी ग्राहक सूचना"},{value:"Built-in calculator",text:"बिल्ट-इन कैलकुलेटर"},{value:"Product identifier",text:"उत्पाद पहचानकर्ता"},{value:"Digital bill",text:"डिजिटल बिल"},{value:"Credit / debt book (khata)",text:"उधार/खाता किताब (खाता)"},{value:"Promotion broadcast",text:"प्रचार प्रसारण"},{value:"Daily sales summary",text:"दैनिक बिक्री सारांश"}],
+          pilot_interest: [{value:"Yes",text:"हाँ"},{value:"Maybe",text:"शायद"},{value:"No",text:"नहीं"}],
+          promo_push_interest: [{value:"Yes definitely",text:"बिल्कुल"},{value:"Maybe if affordable",text:"सस्ता हो तो शायद"},{value:"No",text:"नहीं"}],
+          promo_push_budget: [{value:"NPR 100-200",text:"₹100–200"},{value:"NPR 200-500",text:"₹200–500"},{value:"NPR 500-1000",text:"₹500–1000"},{value:"NPR 1000+",text:"₹1000+"}]
         }
       }
     };
+
+    /* ══════════════════════════════════════════════════════
+       Functions
+       ══════════════════════════════════════════════════════ */
+
+    function byId(id) { return document.getElementById(id); }
 
     function detectLang(paramLang) {
       if (paramLang && paramLang !== "auto") {
@@ -731,6 +687,7 @@
         if (t.pages[page.name]) page.title = t.pages[page.name];
         for (const el of page.elements || []) {
           if (t.questions[el.name]) el.title = t.questions[el.name];
+          if (t.descriptions && t.descriptions[el.name]) el.description = t.descriptions[el.name];
           if (t.choices[el.name]) el.choices = t.choices[el.name];
         }
       }
@@ -739,9 +696,11 @@
 
     function applyChrome(lang) {
       const s = STRINGS[lang] || STRINGS.en;
-      document.documentElement.lang = lang === "ne" ? "ne" : lang === "hi" ? "hi" : "en";
+      document.documentElement.lang = lang;
       byId("pageTitle").textContent = s.pageTitle;
       byId("pageSubtitle").textContent = s.pageSubtitle;
+      byId("introText").textContent = s.introText;
+      byId("langLabel").textContent = s.langLabel;
       byId("labelSession").textContent = s.labelSession;
       byId("labelArea").textContent = s.labelArea;
       byId("labelInterviewer").textContent = s.labelInterviewer;
@@ -750,28 +709,20 @@
       byId("copyPayloadBtn").textContent = s.copyBtn;
       byId("startOverBtn").textContent = s.newBtn;
       byId("backupNote").textContent = s.backupNote;
-    }
-
-    /* ── end i18n ──────────────────────────────────────── */
-
-    function byId(id) {
-      return document.getElementById(id);
+      byId("langSelect").value = lang;
     }
 
     function updateProgress(survey, s) {
       const total = survey.visiblePageCount;
       const current = survey.currentPageNo;
       const remaining = total - current;
-      const pct = Math.round(((current) / total) * 100);
-
+      const pct = Math.round((current / total) * 100);
       const strip = byId("progressStrip");
       strip.classList.remove("hidden");
-
       const circumference = 2 * Math.PI * 18;
       byId("progressFill").style.strokeDashoffset = circumference - (circumference * pct / 100);
       byId("progressPct").textContent = pct + "%";
       byId("countdownText").textContent = s.countdown(remaining);
-
       const idx = Math.min(current, s.encourage.length - 1);
       const el = byId("encourageText");
       el.textContent = s.encourage[idx];
@@ -782,33 +733,29 @@
 
     function parseConfig() {
       const params = new URLSearchParams(window.location.search);
-      const configFromQuery = {
+      const fallback = {
         sid: params.get("sid") || "session-not-set",
         area: params.get("area") || "not-set",
         interviewer: params.get("iv") || "not-set",
         endpoint: params.get("ep") || "",
         lang: params.get("lang") || "auto"
       };
-
       const cfg = params.get("cfg");
-      if (!cfg) {
-        return configFromQuery;
-      }
-
+      if (!cfg) return fallback;
       try {
         const b64 = cfg.replace(/-/g, "+").replace(/_/g, "/");
         const json = decodeURIComponent(escape(window.atob(b64)));
         const parsed = JSON.parse(json);
         return {
-          sid: parsed.sid || configFromQuery.sid,
-          area: parsed.area || configFromQuery.area,
-          interviewer: parsed.iv || configFromQuery.interviewer,
-          endpoint: parsed.ep || configFromQuery.endpoint,
-          lang: parsed.lang || configFromQuery.lang
+          sid: parsed.sid || fallback.sid,
+          area: parsed.area || fallback.area,
+          interviewer: parsed.iv || fallback.interviewer,
+          endpoint: parsed.ep || fallback.endpoint,
+          lang: parsed.lang || fallback.lang
         };
       } catch (error) {
         console.error("Invalid cfg in URL", error);
-        return configFromQuery;
+        return fallback;
       }
     }
 
@@ -818,8 +765,7 @@
     }
 
     function midpointFromBand(type, value) {
-      const table = BAND_MIDPOINTS[type] || {};
-      return table[value] || 0;
+      return (BAND_MIDPOINTS[type] || {})[value] || 0;
     }
 
     function computeEconomics(data) {
@@ -843,19 +789,16 @@
         queuePayload(payload);
         return { ok: false, queued: true, reason: "no-endpoint" };
       }
-
       try {
         const response = await fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         });
-
         if (!response.ok) {
           queuePayload(payload);
           return { ok: false, queued: true, reason: `http-${response.status}` };
         }
-
         localStorage.setItem(LAST_PAYLOAD_KEY, JSON.stringify(payload));
         return { ok: true, queued: false };
       } catch (error) {
@@ -865,54 +808,37 @@
     }
 
     async function flushQueue(endpoint) {
-      if (!endpoint) {
-        return { flushed: 0, pending: JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]").length };
-      }
-
+      if (!endpoint) return { flushed: 0, pending: JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]").length };
       const queue = JSON.parse(localStorage.getItem(QUEUE_KEY) || "[]");
-      if (!queue.length) {
-        return { flushed: 0, pending: 0 };
-      }
-
+      if (!queue.length) return { flushed: 0, pending: 0 };
       const stillPending = [];
       let flushed = 0;
-
       for (const payload of queue) {
         try {
-          const response = await fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-          });
-          if (response.ok) {
-            flushed += 1;
-          } else {
-            stillPending.push(payload);
-          }
-        } catch (error) {
-          stillPending.push(payload);
-        }
+          const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+          if (response.ok) { flushed += 1; } else { stillPending.push(payload); }
+        } catch (error) { stillPending.push(payload); }
       }
-
       localStorage.setItem(QUEUE_KEY, JSON.stringify(stillPending));
       return { flushed, pending: stillPending.length };
     }
 
     function showResult(message, code, queued) {
-      const card = byId("resultCard");
       byId("resultMessage").textContent = message;
       byId("submissionCode").textContent = `Submission ${code}`;
       byId("retryBtn").classList.toggle("hidden", !queued);
-      card.classList.add("show");
+      byId("resultCard").classList.add("show");
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
 
     function randomId() {
-      if (window.crypto && window.crypto.randomUUID) {
-        return window.crypto.randomUUID().slice(0, 8).toUpperCase();
-      }
+      if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID().slice(0, 8).toUpperCase();
       return `R${Date.now().toString(36).toUpperCase()}`;
     }
+
+    /* ══════════════════════════════════════════════════════
+       Bootstrap
+       ══════════════════════════════════════════════════════ */
 
     async function bootstrap() {
       const config = parseConfig();
@@ -940,6 +866,30 @@
         n.textContent = s.syncedMsg(queueStats.flushed);
       }
 
+      /* Language override */
+      byId("langSelect").addEventListener("change", () => {
+        const newLang = byId("langSelect").value;
+        const url = new URL(window.location.href);
+        const cfgParam = url.searchParams.get("cfg");
+        if (cfgParam) {
+          try {
+            const b64 = cfgParam.replace(/-/g, "+").replace(/_/g, "/");
+            const json = decodeURIComponent(escape(window.atob(b64)));
+            const parsed = JSON.parse(json);
+            parsed.lang = newLang;
+            const newJson = JSON.stringify(parsed);
+            const newB64 = btoa(unescape(encodeURIComponent(newJson)));
+            url.searchParams.set("cfg", newB64.replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, ""));
+          } catch (e) {
+            url.searchParams.set("lang", newLang);
+          }
+        } else {
+          url.searchParams.set("lang", newLang);
+        }
+        window.location.href = url.toString();
+      });
+
+      /* Render survey */
       const surveyJson = localizeSurvey(SURVEY_JSON, lang);
       const survey = new Survey.Model(surveyJson);
       survey.showCompletedPage = false;
@@ -955,6 +905,7 @@
         const economics = computeEconomics(sender.data);
         const payload = {
           submissionId,
+          surveyVersion: "2.0",
           submittedAt: new Date().toISOString(),
           context: {
             sessionId: config.sid,
@@ -996,21 +947,14 @@
 
       byId("copyPayloadBtn").addEventListener("click", async () => {
         const raw = localStorage.getItem(LAST_PAYLOAD_KEY);
-        if (!raw) {
-          byId("resultMessage").textContent = s.noBackupMsg;
-          return;
-        }
+        if (!raw) { byId("resultMessage").textContent = s.noBackupMsg; return; }
         try {
           await navigator.clipboard.writeText(raw);
           byId("resultMessage").textContent = s.copiedMsg;
-        } catch (error) {
-          byId("resultMessage").textContent = s.noCopyMsg;
-        }
+        } catch (error) { byId("resultMessage").textContent = s.noCopyMsg; }
       });
 
-      byId("startOverBtn").addEventListener("click", () => {
-        window.location.reload();
-      });
+      byId("startOverBtn").addEventListener("click", () => window.location.reload());
     }
 
     bootstrap();
