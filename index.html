@@ -206,6 +206,7 @@
           elements: [
             { type: "text", name: "vendor_name", title: "Your name (optional)", isRequired: false, maxLength: 80 },
             { type: "checkbox", name: "vendor_type", title: "What do you sell?", isRequired: true,
+              description: "You can pick more than one.",
               showNoneItem: true, noneText: "Prefer not to answer",
               choices: [
                 { value: "vt_veg", text: "Vegetables" },
@@ -218,6 +219,7 @@
               ]
             },
             { type: "radiogroup", name: "selling_mode", title: "How do you sell?", isRequired: true,
+              description: "Mobile = moving around with a cart or vehicle. Stationary = sitting in one fixed spot. Permanent = fixed shop with walls.",
               choices: [
                 { value: "sm_mobile", text: "I go around selling (cart / vehicle)" },
                 { value: "sm_stationary", text: "I sit in one spot" },
@@ -247,6 +249,7 @@
               ]
             },
             { type: "text", name: "travel_hours", title: "How many hours do you travel per day?",
+              description: "Include travel time, waiting between stops, and route setup.",
               visibleIf: "{selling_mode} = 'sm_mobile'", inputType: "number", min: 0, max: 24, isRequired: false },
             { type: "radiogroup", name: "travel_km", title: "How far do you travel in a day?",
               visibleIf: "{selling_mode} = 'sm_mobile'", isRequired: false,
@@ -348,9 +351,11 @@
               ]
             },
             { type: "text", name: "main_item_cost", title: "Your main product — your buying price (NPR)",
+              description: "e.g. price you pay at the wholesale market for 1 kg of your main product",
               visibleIf: "{business_model} = 'bm_buy' or {business_model} = 'bm_both'",
               inputType: "number", min: 0, isRequired: false },
             { type: "text", name: "main_item_price", title: "Your main product — your selling price (NPR)",
+              description: "e.g. price you charge customers for the same 1 kg",
               visibleIf: "{business_model} = 'bm_buy' or {business_model} = 'bm_both'",
               inputType: "number", min: 0, isRequired: false }
           ]
@@ -380,7 +385,7 @@
               ]
             },
             { type: "radiogroup", name: "offers_credit", title: "Do you give products now and get paid later?", isRequired: true,
-              description: "Do customers take goods and pay you another day?",
+              description: "Called 'udhaaro' — customer takes goods today and pays you tomorrow or another day.",
               choices: [
                 { value: "oc_yes", text: "Yes, regularly" },
                 { value: "oc_sometimes", text: "Sometimes" },
@@ -388,7 +393,7 @@
                 { value: "_skip", text: "Prefer not to answer" }
               ]
             },
-            { type: "radiogroup", name: "credit_customers", title: "How many customers owe you money?",
+            { type: "radiogroup", name: "credit_customers", title: "How many customers currently have unpaid credit with you?",
               visibleIf: "{offers_credit} = 'oc_yes' or {offers_credit} = 'oc_sometimes'", isRequired: false,
               choices: [
                 { value: "cc_1_5", text: "1–5" },
@@ -448,6 +453,7 @@
               ]
             },
             { type: "comment", name: "feature_missing", title: "Any feature you wish you had?",
+              description: "Write in any language — even one idea is helpful.",
               isRequired: false, maxLength: 300 }
           ]
         },
@@ -475,6 +481,7 @@
               ]
             },
             { type: "radiogroup", name: "daily_waste", title: "How much of your goods go unsold each day?", isRequired: false,
+              description: "e.g. vegetables that spoil, bread that goes stale — goods you can't sell the next day.",
               choices: [
                 { value: "dw_none", text: "Almost nothing is wasted" },
                 { value: "dw_little", text: "A little (less than 10%)" },
@@ -517,7 +524,7 @@
           name: "contact",
           title: "Contact",
           elements: [
-            { type: "html", name: "contact_intro", html: "<p style='font-size:0.9rem;color:#888;margin-bottom:8px;'>Share your details so we can keep you updated on new features. All fields are optional.</p>" },
+            { type: "html", name: "contact_intro", html: "<p style='font-size:0.9rem;color:#888;margin-bottom:8px;'>When Nirmi launches, we want to reach you first. Share your phone number so we can notify you — email works too. All fields are optional, skip anything you prefer.</p>" },
             { type: "text", name: "contact_name", title: "Your name (optional)", isRequired: false, maxLength: 80 },
             { type: "text", name: "contact_phone", title: "Phone number (optional)", isRequired: false, inputType: "tel" },
             { type: "text", name: "contact_email", title: "Email (optional)", isRequired: false, inputType: "email" },
@@ -551,7 +558,7 @@
         copiedMsg: "Copy भयो!",
         noCopyMsg: "Copy हुन सकेन। कृपया manually गर्नुहोस्।",
         celebrationText: "धन्यवाद! 🎉",
-        contactIntro: "नयाँ सुविधा र offer बारे जानकारी दिन हामीलाई सम्पर्क दिनुहोस्। सबै field ऐच्छिक छन्।",
+        contactIntro: "Nirmi launch हुँदा तपाईँलाई सबभन्दा पहिले सूचना दिन चाहन्छौँ। फोन नम्बर दिनुभयो भने सम्पर्क गर्न सजिलो हुन्छ — email भए अझ राम्रो। सबै ऐच्छिक छन्, केही नदिनु पनि हुन्छ।",
         countdown: n => n === 1 ? "१ पृष्ठ बाँकी" : `${n} पृष्ठ बाँकी`,
         encourage: ["सुरु गरौँ!", "राम्रो!", "अझै राम्रो!", "लगभग सकियो!", "अन्तिम भाग!", "अलि अलि बाँकी!", "सकिँदै छ!"]
       },
@@ -575,7 +582,7 @@
         copiedMsg: "Copy हो गया!",
         noCopyMsg: "Copy नहीं हो सका।",
         celebrationText: "धन्यवाद! 🎉",
-        contactIntro: "नई सुविधाओं की जानकारी के लिए अपना संपर्क दें। सब ऐच्छिक है।",
+        contactIntro: "Nirmi लॉन्च होने पर आपको सबसे पहले बताना चाहते हैं। फ़ोन नंबर दें तो हम आपसे सम्पर्क कर सकते हैं — email हो तो और अच्छा। सब ऐच्छिक है, कुछ न देना भी बिल्कुल ठीक है।",
         countdown: n => n === 1 ? "1 पेज बाक़ी" : `${n} पेज बाक़ी`,
         encourage: ["शुरू करते हैं!", "बढ़िया!", "और अच्छा!", "लगभग हो गया!", "आख़िरी हिस्सा!", "बस थोड़ा बाक़ी!", "ख़त्म हो रहा है!"]
       },
@@ -599,7 +606,7 @@
         copiedMsg: "Copied!",
         noCopyMsg: "Could not copy. Please do it manually.",
         celebrationText: "Thank you! 🎉",
-        contactIntro: "Share your details so we can keep you updated. All fields optional.",
+        contactIntro: "When Nirmi launches, we want to reach you first. Share your phone number so we can notify you — email works too. All fields are optional.",
         countdown: n => n === 1 ? "1 page left" : `${n} pages left`,
         encourage: ["Let's go!", "Great!", "Even better!", "Almost done!", "Final stretch!", "Nearly there!", "Wrapping up!"]
       }
@@ -650,7 +657,7 @@
           selling_mode: "तपाईँ कसरी बेच्नुहुन्छ?",
           transport_mode: "सामान कसरी लैजानुहुन्छ?",
           carry_weight_kg: "एक पटकमा कति किलो सामान लैजानुहुन्छ?",
-          travel_hours: "दिनमा कति घण्टा हिँड्नुहुन्छ?",
+          travel_hours: "दिनमा यात्रामा कति घण्टा बित्छ?",
           travel_km: "एक दिनमा कति टाढा जानुहुन्छ?",
           stops_per_day: "दिनमा कति ठाउँमा रोकिनुहुन्छ?",
           spot_hours: "दिनमा कति घण्टा बस्नुहुन्छ?",
@@ -666,11 +673,11 @@
           repeat_share: "१०० जना ग्राहकमध्ये कति जना फेरि आउँछन्?",
           discovery_mode: "ग्राहकले तपाईँलाई कसरी पत्ता लगाउँछन्?",
           offers_credit: "के तपाईँ ग्राहकलाई सामान दिएर पछि पैसा लिनुहुन्छ?",
-          credit_customers: "कति जनालाई यसरी दिनुभएको छ?",
+          credit_customers: "अहिले कति जना ग्राहकको उधारो बाँकी छ?",
           credit_tracking: "उधारोको हिसाब कसरी राख्नुहुन्छ?",
           credit_problems: "उधारोमा के समस्या छ?",
-          pain_points: "तपाईँको व्यापारमा सबैभन्दा ठूलो समस्या के हो? (३ वटा छान्नुहोस्)",
-          top_features: "कुन सुविधा तपाईँलाई सबैभन्दा बढी काम लाग्छ? (३ वटा छान्नुहोस्)",
+          pain_points: "तपाईँको व्यापारमा सबैभन्दा ठूलो समस्या के हो? (बढीमा ३ वटा छान्नुहोस्)",
+          top_features: "कुन सुविधा तपाईँलाई सबैभन्दा बढी काम लाग्छ? (बढीमा ३ वटा छान्नुहोस्)",
           feature_missing: "अरू कुनै सुविधा चाहिन्छ?",
           smartphone_use: "के तपाईँ फोनबाट व्यापार गर्नुहुन्छ?",
           nearby_competitors: "तपाईँ जस्तै कति जना बेच्ने नजिकमा छन्?",
@@ -683,8 +690,16 @@
           suggestions: "कुनै सुझाव / बिचार?"
         },
         descriptions: {
+          vendor_type: "एउटाभन्दा बढी छान्न मिल्छ।",
+          selling_mode: "हिँडेर = ठेला वा पैदल हिँडेर बेच्ने। एउटा ठाउँमा = सडक छेउ वा बजारमा बसेर। पक्की पसल = छत र भित्ता भएको पसल।",
+          travel_hours: "बाटोमा हिँड्ने र रोकिएर पर्ख्नेको समय जोड्नुहोस्।",
           profit_margin: "१०० रुपैयाँ पाउँदा खर्च काटेर कति बाँकी हुन्छ?",
-          offers_credit: "ग्राहकले सामान लिन्छन् र अर्को दिन पैसा दिन्छन्?",
+          main_item_cost: "उदाहरण: बजारबाट किन्ने एक किलो सामानको भाउ।",
+          main_item_price: "उदाहरण: ग्राहकलाई बेच्ने त्यही एक किलो सामानको भाउ।",
+          offers_credit: "यसलाई 'उधारो' भनिन्छ — ग्राहकले आज सामान लैजाने र भोलि वा पछि पैसा दिने।",
+          credit_customers: "अहिले उधारो बाँकी भएका ग्राहकहरूको संख्या।",
+          daily_waste: "उदाहरण: साँझसम्म नबिकेको तरकारी जुन फाल्नुपर्छ।",
+          feature_missing: "जे पनि भाषामा लेख्नुहोस् — एउटा विचार पनि काम लाग्छ।",
           smartphone_use: "WhatsApp, digital payment, भाउ हेर्ने, आदि।",
           nearby_competitors: "हिँडेर पुग्ने दूरीमा कति जना उस्तै सामान बेच्छन्?",
           premium_features: "रुचि लागेको सबै छान्नुहोस्। नछान्नु पनि हुन्छ।",
@@ -753,11 +768,11 @@
           repeat_share: "१०० ग्राहकों में से कितने दोबारा आते हैं?",
           discovery_mode: "ग्राहक आपको कैसे ढूँढ़ते हैं?",
           offers_credit: "क्या आप ग्राहकों को सामान देकर बाद में पैसे लेते हैं?",
-          credit_customers: "कितने लोगों को ऐसे दिया है?",
+          credit_customers: "अभी कितने ग्राहकों का उधार बाक़ी है?",
           credit_tracking: "उधार का हिसाब कैसे रखते हैं?",
           credit_problems: "उधार में क्या दिक़्क़त होती है?",
-          pain_points: "आपके कारोबार की सबसे बड़ी समस्या क्या है? (३ चुनें)",
-          top_features: "कौन सी सुविधा आपके सबसे ज़्यादा काम आएगी? (३ चुनें)",
+          pain_points: "आपके कारोबार की सबसे बड़ी समस्या क्या है? (अधिकतम ३ चुनें)",
+          top_features: "कौन सी सुविधा आपके सबसे ज़्यादा काम आएगी? (अधिकतम ३ चुनें)",
           feature_missing: "और कोई सुविधा चाहिए?",
           smartphone_use: "क्या आप फ़ोन से कारोबार करते हैं?",
           nearby_competitors: "आपके पास कितने और बेचने वाले हैं?",
@@ -770,8 +785,16 @@
           suggestions: "कोई सुझाव / विचार?"
         },
         descriptions: {
+          vendor_type: "एक से ज़्यादा चुन सकते हैं।",
+          selling_mode: "घूमकर = ठेला या पैदल चलकर बेचना। एक जगह = सड़क किनारे बैठकर। पक्की दुकान = छत-दीवार वाली दुकान।",
+          travel_hours: "चलने और रुककर इंतज़ार करने का कुल समय जोड़ें।",
           profit_margin: "१०० रुपये मिलने पर ख़र्च निकालकर कितना बचता है?",
-          offers_credit: "ग्राहक सामान ले जाते हैं और बाद में पैसे देते हैं?",
+          main_item_cost: "उदाहरण: मंडी से एक किलो सामान ख़रीदने का दाम।",
+          main_item_price: "उदाहरण: ग्राहक को वही एक किलो बेचने का दाम।",
+          offers_credit: "इसे 'उधार' कहते हैं — ग्राहक आज सामान ले जाते हैं और कल या बाद में पैसे देते हैं।",
+          credit_customers: "अभी उधार बाक़ी वाले ग्राहकों की संख्या।",
+          daily_waste: "उदाहरण: शाम को बची हुई सब्ज़ी जो फेंकनी पड़ती है।",
+          feature_missing: "किसी भी भाषा में लिख सकते हैं — एक विचार भी काम आता है।",
           smartphone_use: "WhatsApp, digital payment, दाम देखना, वग़ैरह।",
           nearby_competitors: "पैदल दूरी में कितने लोग वैसा ही सामान बेचते हैं?",
           premium_features: "पसंद की सब चुनें। कुछ न चुनना भी ठीक है।",
