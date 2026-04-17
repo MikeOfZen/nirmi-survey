@@ -220,7 +220,6 @@
         <span class="expiry-badge" id="expiryBadge"></span>
         <div class="btns" style="justify-content:center;">
           <button id="downloadQrBtn" class="btn" type="button">Download QR</button>
-          <button id="copyLinkBtn" class="btn secondary" type="button">Copy link</button>
           <button id="toggleLinkBtn" class="btn secondary" type="button">Show link ▾</button>
         </div>
         <div id="linkBox" style="display:none; width:100%;">
@@ -412,7 +411,7 @@
         data: "https://nirmi.app",
         image: "./assets/logo.svg",
         dotsOptions: {
-          color: "#ff8369",
+          color: "#1a1a1a",
           type: "classy"
         },
         cornersSquareOptions: {
@@ -476,16 +475,6 @@
     });
     ["lang", "expiry"].forEach(id => {
       byId(id).addEventListener("change", scheduleRebuild);
-    });
-
-    byId("copyLinkBtn").addEventListener("click", async () => {
-      try {
-        await navigator.clipboard.writeText(byId("finalUrl").value);
-        byId("copyLinkBtn").textContent = "Copied ✓";
-        setTimeout(() => { byId("copyLinkBtn").textContent = "Copy link"; }, 1400);
-      } catch {
-        byId("copyLinkBtn").textContent = "Copy failed";
-      }
     });
 
     byId("toggleLinkBtn").addEventListener("click", () => {
