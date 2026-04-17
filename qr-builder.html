@@ -28,6 +28,30 @@
       background: var(--bg);
     }
 
+    /* ── Password gate ── */
+    .gate {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+    .gate h1 { margin-bottom: 6px; }
+    .gate .sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 18px; }
+    .gate input {
+      width: 260px;
+      text-align: center;
+      font-size: 1.1rem;
+      padding: 12px;
+      border: 2px solid var(--line);
+      border-radius: 12px;
+    }
+    .gate input:focus { border-color: var(--brand); outline: none; }
+    .gate .gate-error { color: #d9534f; font-size: 0.85rem; margin-top: 8px; min-height: 1.2em; }
+    .gate .btn { margin-top: 12px; font-size: 1rem; padding: 12px 28px; }
+
     .wrap {
       max-width: 980px;
       margin: 0 auto;
@@ -149,6 +173,17 @@
       margin: 0;
     }
 
+    .expiry-badge {
+      display: inline-block;
+      background: #fff0e8;
+      color: #e06a52;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 8px;
+      margin-top: 4px;
+    }
+
     @media (max-width: 860px) {
       .wrap {
         grid-template-columns: 1fr;
@@ -161,7 +196,18 @@
   </style>
 </head>
 <body>
-  <main class="wrap">
+  <!-- Password gate -->
+  <div class="gate" id="gate">
+    <img src="./assets/logo.svg" alt="Nirmi" style="width:64px;height:64px;border-radius:14px;margin-bottom:12px;">
+    <h1>Nirmi QR Builder</h1>
+    <p class="sub">Enter the field password to continue</p>
+    <input id="gatePw" type="password" placeholder="Password" autocomplete="off">
+    <p class="gate-error" id="gateError"></p>
+    <button class="btn" id="gateBtn" type="button">Unlock</button>
+  </div>
+
+  <!-- Main app (hidden until auth) -->
+  <main class="wrap" id="app" style="display:none;">
     <section class="card">
       <div class="brand">
         <img src="./assets/logo.svg" alt="Nirmi logo">
@@ -190,6 +236,15 @@
             <option value="en">English</option>
           </select>
         </div>
+        <div class="field">
+          <label for="expiry">Link expires after</label>
+          <select id="expiry">
+            <option value="3600000">1 hour</option>
+            <option value="43200000" selected>12 hours</option>
+            <option value="86400000">24 hours</option>
+            <option value="2592000000">30 days</option>
+          </select>
+        </div>
       </div>
 
 
@@ -208,6 +263,7 @@
       <h2 style="margin-bottom: 0;">QR preview</h2>
       <canvas id="qrCanvas" width="280" height="280"></canvas>
       <p class="small">Print or show this QR. Vendor opens survey with session context already filled.</p>
+      <span class="expiry-badge" id="expiryBadge"></span>
       <div class="btns" style="margin-top: 0;">
         <button id="downloadQrBtn" class="btn" type="button">Download QR PNG</button>
       </div>
@@ -216,12 +272,78 @@
 
   <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
   <script>
-    const SAVE_KEY = "nirmi_qr_builder_state_v1";
+    "use strict";
 
-    function byId(id) {
-      return document.getElementById(id);
+    /*
+     * Shared HMAC key — same value must appear in index.html.
+     * This isn't server-grade security; it prevents casual URL tampering.
+     * The real gate is the password on this builder page.
+     */
+    const HMAC_KEY = "nirmi-field-2026-hmac-key";
+
+    /*
+     * Password hash: SHA-256 of the correct password.
+     * To change the password, run in browser console:
+     *   crypto.subtle.digest("SHA-256", new TextEncoder().encode("YOUR_NEW_PASSWORD"))
+     *     .then(b => console.log(Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2,"0")).join("")))
+     * Then paste the hex string below.
+     *
+     * Current password: "nirmi2026"
+     */
+    const PW_HASH = "0a7bbb2dc12133662e8bc8432556ead218acfd3dc5e89164535db9fe80544a5f";
+
+    const SAVE_KEY = "nirmi_qr_builder_state_v2";
+    const AUTH_KEY = "nirmi_qr_builder_auth";
+
+    function byId(id) { return document.getElementById(id); }
+
+    /* ── Crypto helpers ── */
+    async function sha256hex(str) {
+      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+      return Array.from(new Uint8Array(buf)).map(x => x.toString(16).padStart(2, "0")).join("");
     }
 
+    async function hmacSign(key, message) {
+      const enc = new TextEncoder();
+      const cryptoKey = await crypto.subtle.importKey(
+        "raw", enc.encode(key), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+      );
+      const sig = await crypto.subtle.sign("HMAC", cryptoKey, enc.encode(message));
+      return Array.from(new Uint8Array(sig)).map(x => x.toString(16).padStart(2, "0")).join("");
+    }
+
+    /* ── Password gate ── */
+    async function checkPassword() {
+      const pw = byId("gatePw").value;
+      if (!pw) { byId("gateError").textContent = "Enter the password"; return; }
+      const hash = await sha256hex(pw);
+      if (hash !== PW_HASH) {
+        byId("gateError").textContent = "Wrong password";
+        byId("gatePw").value = "";
+        byId("gatePw").focus();
+        return;
+      }
+      sessionStorage.setItem(AUTH_KEY, "1");
+      showApp();
+    }
+
+    function showApp() {
+      byId("gate").style.display = "none";
+      byId("app").style.display = "";
+      loadState();
+      buildLink();
+    }
+
+    /* Auto-unlock if already authenticated this session */
+    if (sessionStorage.getItem(AUTH_KEY) === "1") {
+      /* defer to after DOM ready */
+      document.addEventListener("DOMContentLoaded", showApp);
+    }
+
+    byId("gateBtn").addEventListener("click", checkPassword);
+    byId("gatePw").addEventListener("keydown", (e) => { if (e.key === "Enter") checkPassword(); });
+
+    /* ── Encoding ── */
     function encodeCfg(cfg) {
       const json = JSON.stringify(cfg);
       const b64 = btoa(unescape(encodeURIComponent(json)));
@@ -252,6 +374,7 @@
         byId("area").value = s.area || byId("area").value;
         byId("interviewer").value = s.interviewer || byId("interviewer").value;
         byId("lang").value = s.lang || "ne";
+        if (s.expiry) byId("expiry").value = s.expiry;
       } catch (error) {
         /* ignore corrupt state */
       }
@@ -262,9 +385,17 @@
         sid: byId("sid").value.trim(),
         area: byId("area").value.trim(),
         interviewer: byId("interviewer").value.trim(),
-        lang: byId("lang").value
+        lang: byId("lang").value,
+        expiry: byId("expiry").value
       };
       localStorage.setItem(SAVE_KEY, JSON.stringify(s));
+    }
+
+    function formatExpiry(ms) {
+      const h = ms / 3600000;
+      if (h < 24) return `${h} hour${h > 1 ? "s" : ""}`;
+      const d = h / 24;
+      return `${d} day${d > 1 ? "s" : ""}`;
     }
 
     const qr = new QRious({
@@ -274,14 +405,21 @@
       value: "https://example.com"
     });
 
-    function buildLink() {
+    async function buildLink() {
       saveState();
 
+      const sid = byId("sid").value.trim() || "session-not-set";
+      const expiryMs = parseInt(byId("expiry").value, 10);
+      const exp = Date.now() + expiryMs;
+      const sig = await hmacSign(HMAC_KEY, `${sid}|${exp}`);
+
       const cfg = {
-        sid: byId("sid").value.trim() || "session-not-set",
+        sid,
         area: byId("area").value.trim() || "not-set",
         iv: byId("interviewer").value.trim() || "not-set",
-        lang: byId("lang").value
+        lang: byId("lang").value,
+        exp,
+        sig
       };
 
       const encoded = encodeCfg(cfg);
@@ -291,6 +429,10 @@
 
       byId("finalUrl").value = final;
       qr.value = final;
+
+      /* Update expiry badge */
+      const expiresAt = new Date(exp);
+      byId("expiryBadge").textContent = `Expires: ${expiresAt.toLocaleString()} (${formatExpiry(expiryMs)})`;
     }
 
     byId("buildBtn").addEventListener("click", buildLink);
@@ -298,7 +440,7 @@
     byId("copyLinkBtn").addEventListener("click", async () => {
       const url = byId("finalUrl").value.trim();
       if (!url) {
-        buildLink();
+        await buildLink();
       }
       try {
         await navigator.clipboard.writeText(byId("finalUrl").value);
@@ -320,9 +462,6 @@
       a.click();
       a.remove();
     });
-
-    loadState();
-    buildLink();
   </script>
 </body>
 </html>

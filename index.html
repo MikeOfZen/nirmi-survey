@@ -92,6 +92,13 @@
     .char-counter { font-size: 0.72rem; color: var(--muted); text-align: right; margin-top: 2px; }
     .char-counter.near-limit { color: var(--brand); font-weight: 600; }
 
+    /* ── Link error card ── */
+    .link-error { display: none; max-width: 380px; margin: 80px auto; padding: 36px 24px; background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); text-align: center; }
+    .link-error.show { display: block; animation: popIn 0.35s ease; }
+    .link-error .err-icon { font-size: 2.8rem; margin-bottom: 10px; }
+    .link-error h2 { font-size: 1.15rem; margin-bottom: 6px; }
+    .link-error p { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+
     /* ── Animations ── */
     @keyframes popIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
     @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -152,6 +159,13 @@
     <button class="hidden secondary" id="startOverBtn">New</button>
   </div>
 
+  <!-- Link error (expired / tampered) -->
+  <div class="link-error" id="linkError">
+    <div class="err-icon" id="linkErrIcon">⏰</div>
+    <h2 id="linkErrTitle">Link Expired</h2>
+    <p id="linkErrMsg">This survey link has expired. Please ask your interviewer for a new QR code.</p>
+  </div>
+
   <!-- Help bottom sheet -->
   <div class="help-overlay" id="helpOverlay"></div>
   <div class="help-sheet" id="helpSheet">
@@ -168,6 +182,7 @@
        ══════════════════════════════════════════════════════ */
     const INTAKE_URL = "https://nirmi-intake.michael-zl-prime.workers.dev/intake";
     const SURVEY_VERSION = "4.0";
+    const HMAC_KEY = "nirmi-field-2026-hmac-key";
     const BAND_MIDPOINTS = {
       customers_band: { cb_1_10:5, cb_11_20:15, cb_21_40:30, cb_41_70:55, cb_71_100:85, cb_over100:130 },
       revenue_band: { rb_under1k:700, rb_1k_2k:1500, rb_2k_4k:3000, rb_4k_7k:5500, rb_7k_12k:9500, rb_over12k:15000 }
@@ -941,6 +956,16 @@
       el.style.animation = "";
     }
 
+    async function hmacVerify(key, message, expectedHex) {
+      const enc = new TextEncoder();
+      const cryptoKey = await crypto.subtle.importKey(
+        "raw", enc.encode(key), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]
+      );
+      const sig = await crypto.subtle.sign("HMAC", cryptoKey, enc.encode(message));
+      const hex = Array.from(new Uint8Array(sig)).map(x => x.toString(16).padStart(2, "0")).join("");
+      return hex === expectedHex;
+    }
+
     function parseConfig() {
       const params = new URLSearchParams(window.location.search);
       const fallback = {
@@ -948,7 +973,9 @@
         area: params.get("area") || "not-set",
         interviewer: params.get("iv") || "not-set",
         endpoint: params.get("ep") || "",
-        lang: params.get("lang") || "auto"
+        lang: params.get("lang") || "auto",
+        exp: null,
+        sig: null
       };
       const cfg = params.get("cfg");
       if (!cfg) return fallback;
@@ -961,7 +988,9 @@
           area: parsed.area || fallback.area,
           interviewer: parsed.iv || fallback.interviewer,
           endpoint: parsed.ep || fallback.endpoint,
-          lang: parsed.lang || fallback.lang
+          lang: parsed.lang || fallback.lang,
+          exp: parsed.exp || null,
+          sig: parsed.sig || null
         };
       } catch (error) {
         console.error("Invalid cfg in URL", error);
@@ -1186,15 +1215,42 @@
       window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
     }
 
+    function showLinkError(icon, title, msg) {
+      /* Hide main UI, show error card */
+      byId("surveyCard").classList.add("hidden");
+      byId("progressStrip").classList.add("hidden");
+      const el = byId("linkError");
+      byId("linkErrIcon").textContent = icon;
+      byId("linkErrTitle").textContent = title;
+      byId("linkErrMsg").textContent = msg;
+      el.classList.add("show");
+    }
+
     /* ══════════════════════════════════════════════════════
        Bootstrap
        ══════════════════════════════════════════════════════ */
-    function bootstrap() {
+    async function bootstrap() {
       registerLocales();
       captureGeolocation();
       const surveyStartedAt = new Date().toISOString();
 
       const config = parseConfig();
+
+      /* ── Validate signed links ── */
+      if (config.exp && config.sig) {
+        /* Check expiry */
+        if (Date.now() > config.exp) {
+          showLinkError("⏰", "Link Expired", "This survey link has expired. Please ask your interviewer for a new QR code.");
+          return;
+        }
+        /* Verify HMAC signature (prevents tampering with exp) */
+        const valid = await hmacVerify(HMAC_KEY, `${config.sid}|${config.exp}`, config.sig);
+        if (!valid) {
+          showLinkError("🚫", "Invalid Link", "This survey link appears to be modified or invalid. Please scan the original QR code.");
+          return;
+        }
+      }
+
       const lang = detectLang(config.lang);
       config.lang = lang;
       const s = STRINGS[lang] || STRINGS.en;
