@@ -53,11 +53,11 @@
     .gate .btn { margin-top: 12px; font-size: 1rem; padding: 12px 28px; }
 
     .wrap {
-      max-width: 980px;
+      max-width: 520px;
       margin: 0 auto;
       padding: 18px 14px 30px;
-      display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
+      display: flex;
+      flex-direction: column;
       gap: 14px;
     }
 
@@ -153,17 +153,18 @@
       border: 1px solid #ffd4c0;
     }
 
-    .preview {
-      display: grid;
-      gap: 10px;
-      justify-items: center;
+    .qr-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
       text-align: center;
+      gap: 10px;
     }
 
-    #qrCanvas {
+    #qrContainer canvas {
       border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 8px;
+      border-radius: 14px;
+      padding: 10px;
       background: #fff;
     }
 
@@ -181,14 +182,16 @@
       font-weight: 700;
       padding: 3px 10px;
       border-radius: 8px;
-      margin-top: 4px;
     }
 
-    @media (max-width: 860px) {
-      .wrap {
-        grid-template-columns: 1fr;
-      }
+    #linkBox textarea {
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: var(--muted);
+      width: 100%;
+    }
 
+    @media (max-width: 600px) {
       .row {
         grid-template-columns: 1fr;
       }
@@ -207,70 +210,69 @@
   </div>
 
   <!-- Main app (hidden until auth) -->
-  <main class="wrap" id="app" style="display:none;">
-    <section class="card">
-      <div class="brand">
-        <img src="./assets/logo.svg" alt="Nirmi logo">
-        <h1>Nirmi QR Builder</h1>
-      </div>
-      <p class="muted">Create one QR per field session. Setup is embedded into the QR link, so vendors only see a short survey form on their phone.</p>
+  <main id="app" style="display:none;">
+    <div class="wrap">
 
-      <div class="row">
-        <div class="field">
-          <label for="sid">Session ID</label>
-          <input id="sid" placeholder="e.g. FIELD-2026-04-16">
+      <!-- QR output — always on top -->
+      <section class="card qr-card">
+        <div id="qrContainer"></div>
+        <p class="small">Print or show this QR. Vendor opens the survey with session context pre-filled.</p>
+        <span class="expiry-badge" id="expiryBadge"></span>
+        <div class="btns" style="justify-content:center;">
+          <button id="downloadQrBtn" class="btn" type="button">Download QR</button>
+          <button id="copyLinkBtn" class="btn secondary" type="button">Copy link</button>
+          <button id="toggleLinkBtn" class="btn secondary" type="button">Show link ▾</button>
         </div>
-        <div class="field">
-          <label for="area">Area</label>
-          <input id="area" value="Satungal">
+        <div id="linkBox" style="display:none; width:100%;">
+          <textarea id="finalUrl" readonly></textarea>
         </div>
-        <div class="field">
-          <label for="interviewer">Interviewer</label>
-          <input id="interviewer" value="Mike">
-        </div>
-        <div class="field">
-          <label for="lang">Language hint</label>
-          <select id="lang">
-            <option value="ne" selected>नेपाली (Nepali)</option>
-            <option value="hi">हिन्दी (Hindi)</option>
-            <option value="en">English</option>
-          </select>
-        </div>
-        <div class="field">
-          <label for="expiry">Link expires after</label>
-          <select id="expiry">
-            <option value="3600000">1 hour</option>
-            <option value="43200000" selected>12 hours</option>
-            <option value="86400000">24 hours</option>
-            <option value="2592000000">30 days</option>
-          </select>
-        </div>
-      </div>
+      </section>
 
+      <!-- Session setup form -->
+      <section class="card">
+        <div class="brand">
+          <img src="./assets/logo.svg" alt="Nirmi logo">
+          <h1>Nirmi QR Builder</h1>
+        </div>
+        <p class="muted">Create one QR per field session. Setup is embedded into the QR link — vendors see only a clean survey form on their phone.</p>
 
-      <div class="btns">
-        <button id="buildBtn" class="btn" type="button">Build QR link</button>
-        <button id="copyLinkBtn" class="btn secondary" type="button">Copy link</button>
-      </div>
+        <div class="row">
+          <div class="field">
+            <label for="sid">Session ID</label>
+            <input id="sid" placeholder="e.g. FIELD-2026-04-16">
+          </div>
+          <div class="field">
+            <label for="area">Area</label>
+            <input id="area" value="Satungal">
+          </div>
+          <div class="field">
+            <label for="interviewer">Interviewer</label>
+            <input id="interviewer" value="Mike">
+          </div>
+          <div class="field">
+            <label for="lang">Language hint</label>
+            <select id="lang">
+              <option value="ne" selected>नेपाली (Nepali)</option>
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="en">English</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="expiry">Link expires after</label>
+            <select id="expiry">
+              <option value="3600000">1 hour</option>
+              <option value="43200000" selected>12 hours</option>
+              <option value="86400000">24 hours</option>
+              <option value="2592000000">30 days</option>
+            </select>
+          </div>
+        </div>
+      </section>
 
-      <div class="field" style="margin-top: 10px;">
-        <label for="finalUrl">Final QR URL</label>
-        <textarea id="finalUrl" readonly></textarea>
-      </div>
-    </section>
-
-    <section class="card preview">
-      <h2 style="margin-bottom: 0;">QR preview</h2>
-      <canvas id="qrCanvas" width="280" height="280"></canvas>
-      <p class="small">Print or show this QR. Vendor opens survey with session context already filled.</p>
-      <span class="expiry-badge" id="expiryBadge"></span>
-      <div class="btns" style="margin-top: 0;">
-        <button id="downloadQrBtn" class="btn" type="button">Download QR PNG</button>
-      </div>
-    </section>
+    </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+  <script src="https://unpkg.com/qr-code-styling@1.6.0-rc.1/lib/qr-code-styling.js"></script>
   <script>
     "use strict";
 
@@ -331,6 +333,7 @@
       byId("gate").style.display = "none";
       byId("app").style.display = "";
       loadState();
+      initQr();
       buildLink();
     }
 
@@ -398,12 +401,44 @@
       return `${d} day${d > 1 ? "s" : ""}`;
     }
 
-    const qr = new QRious({
-      element: byId("qrCanvas"),
-      size: 280,
-      level: "M",
-      value: "https://example.com"
-    });
+    let qrCode = null;
+    let debounceTimer = null;
+
+    function initQr() {
+      qrCode = new QRCodeStyling({
+        width: 260,
+        height: 260,
+        type: "canvas",
+        data: "https://nirmi.app",
+        image: "./assets/logo.svg",
+        dotsOptions: {
+          color: "#ff8369",
+          type: "classy"
+        },
+        cornersSquareOptions: {
+          color: "#ff8369",
+          type: "extra-rounded"
+        },
+        cornersDotOptions: {
+          color: "#c95b43",
+          type: "dot"
+        },
+        backgroundOptions: {
+          color: "#ffffff"
+        },
+        imageOptions: {
+          crossOrigin: "anonymous",
+          margin: 6,
+          imageSize: 0.28
+        }
+      });
+      qrCode.append(byId("qrContainer"));
+    }
+
+    function scheduleRebuild() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(buildLink, 350);
+    }
 
     async function buildLink() {
       saveState();
@@ -428,39 +463,42 @@
       const final = `${target}?cfg=${encoded}`;
 
       byId("finalUrl").value = final;
-      qr.value = final;
+      if (qrCode) qrCode.update({ data: final });
 
       /* Update expiry badge */
       const expiresAt = new Date(exp);
       byId("expiryBadge").textContent = `Expires: ${expiresAt.toLocaleString()} (${formatExpiry(expiryMs)})`;
     }
 
-    byId("buildBtn").addEventListener("click", buildLink);
+    /* Auto-rebuild on any field change */
+    ["sid", "area", "interviewer"].forEach(id => {
+      byId(id).addEventListener("input", scheduleRebuild);
+    });
+    ["lang", "expiry"].forEach(id => {
+      byId(id).addEventListener("change", scheduleRebuild);
+    });
 
     byId("copyLinkBtn").addEventListener("click", async () => {
-      const url = byId("finalUrl").value.trim();
-      if (!url) {
-        await buildLink();
-      }
       try {
         await navigator.clipboard.writeText(byId("finalUrl").value);
-        byId("copyLinkBtn").textContent = "Copied";
-        setTimeout(() => {
-          byId("copyLinkBtn").textContent = "Copy link";
-        }, 1000);
-      } catch (error) {
+        byId("copyLinkBtn").textContent = "Copied ✓";
+        setTimeout(() => { byId("copyLinkBtn").textContent = "Copy link"; }, 1400);
+      } catch {
         byId("copyLinkBtn").textContent = "Copy failed";
       }
     });
 
+    byId("toggleLinkBtn").addEventListener("click", () => {
+      const box = byId("linkBox");
+      const btn = byId("toggleLinkBtn");
+      const hidden = box.style.display === "none";
+      box.style.display = hidden ? "block" : "none";
+      btn.textContent = hidden ? "Hide link ▴" : "Show link ▾";
+    });
+
     byId("downloadQrBtn").addEventListener("click", () => {
-      const dataUrl = byId("qrCanvas").toDataURL("image/png");
-      const a = document.createElement("a");
-      a.href = dataUrl;
-      a.download = `nirmi-qr-${byId("sid").value.trim() || "session"}.png`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
+      const sid = byId("sid").value.trim() || "session";
+      qrCode.download({ name: `nirmi-qr-${sid}`, extension: "png" });
     });
   </script>
 </body>
